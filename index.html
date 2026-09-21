@@ -18,12 +18,10 @@
         /* Certificate Styling */
         .container { max-width: 800px; margin: auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); display: none; position: relative; }
         
-        /* Top Header with Golden Emblem & QR */
+        /* Top Header with Real Emblem & QR */
         .top-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
-        .emblem-box { text-align: center; width: 120px; }
-        .golden-emblem { width: 60px; height: 60px; background: linear-gradient(135deg, #FFD700, #DAA520, #B8860B); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2); border: 2px solid #996515; }
-        .golden-emblem span { font-size: 10px; font-weight: bold; color: #331a00; text-align: center; line-height: 1.1; }
-        .emblem-text { font-size: 9px; font-weight: bold; color: #b8860b; margin-top: 4px; text-transform: uppercase; }
+        .emblem-box { text-align: center; width: 80px; }
+        .emblem-box img { width: 65px; height: auto; }
         
         .qr-container img { width: 100px; height: 100px; border: 1px solid #ccc; padding: 3px; background: white; }
         
@@ -105,17 +103,14 @@
     <!-- Certificate Container -->
     <div class="container" id="certificate-box">
         
-        <!-- Top Header with Hindi/Roll and Golden Emblem / QR -->
+        <!-- Top Header with Hindi/Roll, Official Emblem & QR -->
         <div class="top-header">
             <div>
                 <div class="hindi-reg">अनुक्रमांक: <span id="disp-roll-hindi">00150803159242</span></div>
             </div>
-            <!-- Golden Government Symbol / Emblem -->
+            <!-- Official National Emblem Symbol Added Here -->
             <div class="emblem-box">
-                <div class="golden-emblem">
-                    <span>GOVT.<br>INDIA</span>
-                </div>
-                <div class="emblem-text">VERIFIED NCVT</div>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="National Emblem of India">
             </div>
             <!-- QR Code on Top Right -->
             <div class="qr-container">
@@ -268,7 +263,6 @@
 
     <script>
         function generateCertificate() {
-            // Form se value fetch karke certificate mein set karna
             const name = document.getElementById('input-name').value;
             const roll = document.getElementById('input-roll').value;
             const father = document.getElementById('input-father').value;
@@ -291,11 +285,9 @@
             document.getElementById('disp-total2').innerText = marks;
             document.getElementById('disp-result').innerText = result;
 
-            // Form chupao aur certificate dikhao
             document.getElementById('input-form-box').style.display = 'none';
             document.getElementById('certificate-box').style.display = 'block';
 
-            // Automatic QR Code generate karna website link ke sath
             const currentUrl = window.location.href.split('?')[0];
             const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(currentUrl)}`;
             document.getElementById('qr-code').src = qrApiUrl;
