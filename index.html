@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NCVT ITI Dynamic Certificate & Mark Sheet Generator</title>
+    <title>NCVT ITI Certificate Verification Portal</title>
     <style>
-        /* A4 Landscape Page Setup for Printing */
         @page {
             size: A4 landscape;
             margin: 10mm;
@@ -20,7 +19,7 @@
         .gen-btn { grid-column: span 2; background: #003366; color: white; border: none; padding: 12px; font-size: 15px; font-weight: bold; border-radius: 4px; cursor: pointer; margin-top: 10px; }
         .gen-btn:hover { background: #002244; }
 
-        /* Certificate Styling - A4 Landscape Width Layout */
+        /* Certificate Styling - A4 Landscape */
         .container { 
             width: 1050px; 
             max-width: 100%; 
@@ -35,11 +34,8 @@
             position: relative; 
         }
         
-        /* Top Header with Golden Emblem & QR */
         .top-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
         .emblem-box { text-align: center; width: 90px; }
-        
-        /* Golden Color Filter applied to National Emblem */
         .emblem-box img { 
             width: 75px; 
             height: auto; 
@@ -79,9 +75,9 @@
 </head>
 <body>
 
-    <!-- Data Input Form -->
+    <!-- Data Input Form (Admin Panel) -->
     <div class="no-print" id="input-form-box">
-        <h3>ITI Certificate & Mark Sheet Generator (A4 Landscape Govt Style)</h3>
+        <h3>ITI Certificate Generator & Verification Portal</h3>
         <div class="form-grid">
             <div class="form-group">
                 <label>Student Name:</label>
@@ -119,25 +115,22 @@
                 <label>Result Status:</label>
                 <input type="text" id="input-result" value="Pass">
             </div>
-            <button class="gen-btn" onclick="generateCertificate()">Generate & View Certificate</button>
+            <button class="gen-btn" onclick="generateCertificate()">Generate Verified Certificate & QR</button>
         </div>
     </div>
 
-    <!-- Certificate Container -->
+    <!-- Certificate View Container (Only student details & QR) -->
     <div class="container" id="certificate-box">
         
-        <!-- Top Header with Hindi/Roll, Golden Emblem & QR -->
         <div class="top-header">
             <div>
                 <div class="hindi-reg">अनुक्रमांक: <span id="disp-roll-hindi">00150803159242</span></div>
             </div>
-            <!-- Golden Colored National Emblem -->
             <div class="emblem-box">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="Golden National Emblem of India">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="Golden National Emblem">
             </div>
-            <!-- QR Code on Top Right -->
             <div class="qr-container">
-                <img id="qr-code" src="" alt="QR Code">
+                <img id="qr-code" src="" alt="Government Verification QR Code">
             </div>
         </div>
 
@@ -281,10 +274,37 @@
             <p>The NCVT shall not be responsible for any direct or indirect financial losses, any loss of goodwill or reputation, or any other loss or damage caused by any incorrect / fraudulent information in this computer generated certificate that cannot be validated by the NCVT MIS portal. NCVT also reserves the right to take appropriate legal action in such cases.</p>
         </div>
 
-        <button class="print-btn" onclick="window.print()">Print / Save Certificate as PDF (Landscape)</button>
+        <button class="print-btn" onclick="window.print()">Print / Save Certificate as PDF</button>
     </div>
 
     <script>
+        // Page load hude hi check karega ki URL vich student data hai ya nahi
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if(urlParams.has('name')) {
+                // Agar URL vich data hai, ta admin form chupao te sirf certificate dikhao
+                document.getElementById('disp-name').innerText = urlParams.get('name');
+                document.getElementById('disp-roll').innerText = urlParams.get('roll');
+                document.getElementById('disp-roll-hindi').innerText = urlParams.get('roll');
+                document.getElementById('disp-father').innerText = urlParams.get('father');
+                document.getElementById('disp-dob').innerText = urlParams.get('dob');
+                document.getElementById('disp-trade').innerText = urlParams.get('trade');
+                document.getElementById('disp-exam').innerText = urlParams.get('exam');
+                document.getElementById('disp-iti').innerText = urlParams.get('iti');
+                document.getElementById('disp-total').innerText = urlParams.get('marks');
+                document.getElementById('disp-total2').innerText = urlParams.get('marks');
+                document.getElementById('disp-result').innerText = urlParams.get('result');
+
+                document.getElementById('input-form-box').style.display = 'none';
+                document.getElementById('certificate-box').style.display = 'block';
+
+                // QR code vich exact isse student da unique verified link lagvega
+                const currentUrl = window.location.href;
+                const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(currentUrl)}`;
+                document.getElementById('qr-code').src = qrApiUrl;
+            }
+        };
+
         function generateCertificate() {
             const name = document.getElementById('input-name').value;
             const roll = document.getElementById('input-roll').value;
@@ -296,24 +316,11 @@
             const marks = document.getElementById('input-marks').value;
             const result = document.getElementById('input-result').value;
 
-            document.getElementById('disp-name').innerText = name;
-            document.getElementById('disp-roll').innerText = roll;
-            document.getElementById('disp-roll-hindi').innerText = roll;
-            document.getElementById('disp-father').innerText = father;
-            document.getElementById('disp-dob').innerText = dob;
-            document.getElementById('disp-trade').innerText = trade;
-            document.getElementById('disp-exam').innerText = exam;
-            document.getElementById('disp-iti').innerText = iti;
-            document.getElementById('disp-total').innerText = marks;
-            document.getElementById('disp-total2').innerText = marks;
-            document.getElementById('disp-result').innerText = result;
+            // Student da data URL parameters vich encode karke page reload karega
+            const baseUrl = window.location.href.split('?')[0];
+            const targetUrl = `${baseUrl}?name=${encodeURIComponent(name)}&roll=${encodeURIComponent(roll)}&father=${encodeURIComponent(father)}&dob=${encodeURIComponent(dob)}&trade=${encodeURIComponent(trade)}&exam=${encodeURIComponent(exam)}&iti=${encodeURIComponent(iti)}&marks=${encodeURIComponent(marks)}&result=${encodeURIComponent(result)}`;
 
-            document.getElementById('input-form-box').style.display = 'none';
-            document.getElementById('certificate-box').style.display = 'block';
-
-            const currentUrl = window.location.href.split('?')[0];
-            const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(currentUrl)}`;
-            document.getElementById('qr-code').src = qrApiUrl;
+            window.location.href = targetUrl;
         }
     </script>
 </body>
