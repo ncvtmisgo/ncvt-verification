@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NCVT ITI Certificate Verification Portal</title>
+    <title>NCVT ITI Permanent Certificate Verification Portal</title>
     <style>
         @page {
             size: A4 landscape;
@@ -36,7 +36,6 @@
         
         .top-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
         
-        /* Student Photo Styling on Certificate */
         .student-photo-box { width: 90px; height: 110px; border: 1px solid #999; background: #eee; display: flex; align-items: center; justify-content: center; overflow: hidden; }
         .student-photo-box img { width: 100%; height: 100%; object-fit: cover; }
 
@@ -83,17 +82,18 @@
 </head>
 <body>
 
-    <!-- Data Input Form (Admin Panel) -->
+    <!-- Admin Panel (Data Entry for New Students) -->
     <div class="no-print" id="input-form-box" style="display: none;">
-        <h3>ITI Certificate Generator & Verification Portal</h3>
+        <h3>Permanent ITI Certificate Database Portal</h3>
+        <p style="text-align:center; font-size:12px; color:#666;">Yithe student da data bharo te permanent link/QR generate karo jo 2 saal baad vi chalega.</p>
         <div class="form-grid">
+            <div class="form-group">
+                <label>Roll Number (Unique ID):</label>
+                <input type="text" id="input-roll" value="00150803159242">
+            </div>
             <div class="form-group">
                 <label>Student Name:</label>
                 <input type="text" id="input-name" value="SUNIL KUMAR">
-            </div>
-            <div class="form-group">
-                <label>Roll Number / Enrollment No.:</label>
-                <input type="text" id="input-roll" value="00150803159242">
             </div>
             <div class="form-group">
                 <label>Father's Name:</label>
@@ -124,10 +124,10 @@
                 <input type="text" id="input-result" value="Pass">
             </div>
             <div class="form-group" style="grid-column: span 2;">
-                <label>Upload Student Photo:</label>
-                <input type="file" id="input-pic" accept="image/*">
+                <label>Student Photo URL (Paste Image Link or Base64):</label>
+                <input type="text" id="input-pic" value="https://i.imgur.com/6VBx3io.png" placeholder="Paste image link here">
             </div>
-            <button class="gen-btn" onclick="generateCertificate()">Generate Verified Certificate & QR</button>
+            <button class="gen-btn" onclick="saveAndGenerate()">Generate Permanent Verified Link & QR</button>
         </div>
     </div>
 
@@ -137,10 +137,8 @@
         <div class="top-header">
             <div>
                 <div class="hindi-reg">अनुक्रमांक: <span id="disp-roll-hindi">00150803159242</span></div>
-                <!-- Student Photo Display -->
                 <div class="student-photo-box" style="margin-top: 5px;">
-                    <img id="disp-photo" src="" alt="Photo" style="display:none;">
-                    <span id="no-photo-text" style="font-size: 10px; color: #666;">No Photo</span>
+                    <img id="disp-photo" src="" alt="Photo">
                 </div>
             </div>
             <div class="emblem-box">
@@ -293,44 +291,67 @@
 
         <div class="action-btns">
             <button class="print-btn" onclick="window.print()">Print / Save Certificate as PDF</button>
-            <button class="edit-btn" onclick="openAdminPanel()">Create New / Edit Certificate</button>
+            <button class="edit-btn" onclick="openAdminPanel()">Add New Student / Admin Portal</button>
         </div>
     </div>
 
     <script>
+        // PERMANENT DATABASE OF STUDENTS (Yithe tusi apne sare students da data hamesha layi save rakh sakde ho)
+        const studentDatabase = {
+            "00150803159242": {
+                name: "SUNIL KUMAR",
+                father: "PREM KUMAR",
+                dob: "19-Jul-87",
+                trade: "Plumber",
+                exam: "Jul 2016",
+                iti: "PR03000039 - Govt. ITI, Pathankot-NH 44, near Nalwa Bridge, Dhaki, Pathankot, Punjab 145001",
+                marks: "536",
+                result: "Pass",
+                photo: "https://i.imgur.com/6VBx3io.png"
+            },
+            // Jekar koi nawa student add karna hove, ta ohi roll number nal ithe data likh do:
+            "1234567890": {
+                name: "AMAN KUMAR",
+                father: "RAM LAL",
+                dob: "10-Jan-95",
+                trade: "Electrician",
+                exam: "Jul 2021",
+                iti: "PR03000039 - Govt. ITI, Pathankot",
+                marks: "600",
+                result: "Pass",
+                photo: "https://i.imgur.com/6VBx3io.png"
+            }
+        };
+
         window.onload = function() {
             const urlParams = new URLSearchParams(window.location.search);
-            if(urlParams.has('name')) {
-                // Agar URL mein data hai, toh certificate show karo aur admin form hide rakho
-                document.getElementById('disp-name').innerText = urlParams.get('name');
-                document.getElementById('disp-roll').innerText = urlParams.get('roll');
-                document.getElementById('disp-roll-hindi').innerText = urlParams.get('roll');
-                document.getElementById('disp-father').innerText = urlParams.get('father');
-                document.getElementById('disp-dob').innerText = urlParams.get('dob');
-                document.getElementById('disp-trade').innerText = urlParams.get('trade');
-                document.getElementById('disp-exam').innerText = urlParams.get('exam');
-                document.getElementById('disp-iti').innerText = urlParams.get('iti');
-                document.getElementById('disp-total').innerText = urlParams.get('marks');
-                document.getElementById('disp-total2').innerText = urlParams.get('marks');
-                document.getElementById('disp-result').innerText = urlParams.get('result');
+            const rollParam = urlParams.get('roll');
 
-                const photoData = localStorage.getItem('student_photo');
-                if(photoData) {
-                    document.getElementById('disp-photo').src = photoData;
-                    document.getElementById('disp-photo').style.display = 'block';
-                    document.getElementById('no-photo-text').style.display = 'none';
-                }
+            if (rollParam && studentDatabase[rollParam]) {
+                const s = studentDatabase[rollParam];
+                document.getElementById('disp-name').innerText = s.name;
+                document.getElementById('disp-roll').innerText = rollParam;
+                document.getElementById('disp-roll-hindi').innerText = rollParam;
+                document.getElementById('disp-father').innerText = s.father;
+                document.getElementById('disp-dob').innerText = s.dob;
+                document.getElementById('disp-trade').innerText = s.trade;
+                document.getElementById('disp-exam').innerText = s.exam;
+                document.getElementById('disp-iti').innerText = s.iti;
+                document.getElementById('disp-total').innerText = s.marks;
+                document.getElementById('disp-total2').innerText = s.marks;
+                document.getElementById('disp-result').innerText = s.result;
+                document.getElementById('disp-photo').src = s.photo;
 
                 document.getElementById('input-form-box').style.display = 'none';
                 document.getElementById('certificate-box').style.display = 'block';
 
+                // QR code will point permanently to this student's unique roll number link
                 const currentUrl = window.location.href;
                 const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(currentUrl)}`;
                 document.getElementById('qr-code').src = qrApiUrl;
             } else {
-                // Default view (agar koi pehli baar direct link khole toh default Sunil Kumar ka certificate dikhega, admin form nahi)
-                const defaultUrl = window.location.href.split('?')[0] + "?name=SUNIL%20KUMAR&roll=00150803159242&father=PREM%20KUMAR&dob=19-Jul-87&trade=Plumber&exam=Jul%202016&iti=PR03000039%20-%20Govt.%20ITI,%20Pathankot&marks=536&result=Pass";
-                window.location.href = defaultUrl;
+                // Default: load Sunil Kumar if no roll is specified
+                window.location.href = window.location.href.split('?')[0] + "?roll=00150803159242";
             }
         };
 
@@ -339,9 +360,9 @@
             document.getElementById('input-form-box').style.display = 'block';
         }
 
-        function generateCertificate() {
-            const name = document.getElementById('input-name').value;
+        function saveAndGenerate() {
             const roll = document.getElementById('input-roll').value;
+            const name = document.getElementById('input-name').value;
             const father = document.getElementById('input-father').value;
             const dob = document.getElementById('input-dob').value;
             const trade = document.getElementById('input-trade').value;
@@ -349,24 +370,12 @@
             const iti = document.getElementById('input-iti').value;
             const marks = document.getElementById('input-marks').value;
             const result = document.getElementById('input-result').value;
+            const photo = document.getElementById('input-pic').value;
 
-            const fileInput = document.getElementById('input-pic');
-            if (fileInput.files && fileInput.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    localStorage.setItem('student_photo', e.target.result);
-                    redirectToCert(name, roll, father, dob, trade, exam, iti, marks, result);
-                }
-                reader.readAsDataURL(fileInput.files[0]);
-            } else {
-                redirectToCert(name, roll, father, dob, trade, exam, iti, marks, result);
-            }
-        }
-
-        function redirectToCert(name, roll, father, dob, trade, exam, iti, marks, result) {
+            alert("Data generated! Code copy karke apni studentDatabase list vich zaroor save kar lao taaki permanent hove.");
+            
             const baseUrl = window.location.href.split('?')[0];
-            const targetUrl = `${baseUrl}?name=${encodeURIComponent(name)}&roll=${encodeURIComponent(roll)}&father=${encodeURIComponent(father)}&dob=${encodeURIComponent(dob)}&trade=${encodeURIComponent(trade)}&exam=${encodeURIComponent(exam)}&iti=${encodeURIComponent(iti)}&marks=${encodeURIComponent(marks)}&result=${encodeURIComponent(result)}`;
-            window.location.href = targetUrl;
+            window.location.href = `${baseUrl}?roll=${encodeURIComponent(roll)}`;
         }
     </script>
 </body>
