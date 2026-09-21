@@ -30,11 +30,16 @@
             box-sizing: border-box;
             border-radius: 8px; 
             box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
-            display: none; 
+            display: block; 
             position: relative; 
         }
         
         .top-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+        
+        /* Student Photo Styling on Certificate */
+        .student-photo-box { width: 90px; height: 110px; border: 1px solid #999; background: #eee; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .student-photo-box img { width: 100%; height: 100%; object-fit: cover; }
+
         .emblem-box { text-align: center; width: 90px; }
         .emblem-box img { 
             width: 75px; 
@@ -63,11 +68,14 @@
         .sign-area { display: flex; justify-content: flex-end; margin-top: 20px; }
         .sign-box { text-align: center; font-size: 12px; font-weight: bold; }
 
-        .print-btn { display: block; width: 100%; padding: 12px; background: #28a745; color: white; border: none; font-size: 16px; border-radius: 4px; cursor: pointer; margin-top: 20px; font-weight: bold; }
+        .action-btns { display: flex; gap: 10px; margin-top: 20px; }
+        .print-btn { flex: 1; padding: 12px; background: #28a745; color: white; border: none; font-size: 16px; border-radius: 4px; cursor: pointer; font-weight: bold; }
         .print-btn:hover { background: #218838; }
+        .edit-btn { flex: 1; padding: 12px; background: #003366; color: white; border: none; font-size: 16px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .edit-btn:hover { background: #002244; }
 
         @media print {
-            .no-print, .print-btn { display: none !important; }
+            .no-print, .action-btns { display: none !important; }
             body { background: white; padding: 0; margin: 0; }
             .container { box-shadow: none; padding: 10px; display: block !important; border: none; width: 100%; }
         }
@@ -76,7 +84,7 @@
 <body>
 
     <!-- Data Input Form (Admin Panel) -->
-    <div class="no-print" id="input-form-box">
+    <div class="no-print" id="input-form-box" style="display: none;">
         <h3>ITI Certificate Generator & Verification Portal</h3>
         <div class="form-grid">
             <div class="form-group">
@@ -115,16 +123,25 @@
                 <label>Result Status:</label>
                 <input type="text" id="input-result" value="Pass">
             </div>
+            <div class="form-group" style="grid-column: span 2;">
+                <label>Upload Student Photo:</label>
+                <input type="file" id="input-pic" accept="image/*">
+            </div>
             <button class="gen-btn" onclick="generateCertificate()">Generate Verified Certificate & QR</button>
         </div>
     </div>
 
-    <!-- Certificate View Container (Only student details & QR) -->
+    <!-- Certificate View Container -->
     <div class="container" id="certificate-box">
         
         <div class="top-header">
             <div>
                 <div class="hindi-reg">अनुक्रमांक: <span id="disp-roll-hindi">00150803159242</span></div>
+                <!-- Student Photo Display -->
+                <div class="student-photo-box" style="margin-top: 5px;">
+                    <img id="disp-photo" src="" alt="Photo" style="display:none;">
+                    <span id="no-photo-text" style="font-size: 10px; color: #666;">No Photo</span>
+                </div>
             </div>
             <div class="emblem-box">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="Golden National Emblem">
@@ -274,15 +291,17 @@
             <p>The NCVT shall not be responsible for any direct or indirect financial losses, any loss of goodwill or reputation, or any other loss or damage caused by any incorrect / fraudulent information in this computer generated certificate that cannot be validated by the NCVT MIS portal. NCVT also reserves the right to take appropriate legal action in such cases.</p>
         </div>
 
-        <button class="print-btn" onclick="window.print()">Print / Save Certificate as PDF</button>
+        <div class="action-btns">
+            <button class="print-btn" onclick="window.print()">Print / Save Certificate as PDF</button>
+            <button class="edit-btn" onclick="openAdminPanel()">Create New / Edit Certificate</button>
+        </div>
     </div>
 
     <script>
-        // Page load hude hi check karega ki URL vich student data hai ya nahi
         window.onload = function() {
             const urlParams = new URLSearchParams(window.location.search);
             if(urlParams.has('name')) {
-                // Agar URL vich data hai, ta admin form chupao te sirf certificate dikhao
+                // Agar URL mein data hai, toh certificate show karo aur admin form hide rakho
                 document.getElementById('disp-name').innerText = urlParams.get('name');
                 document.getElementById('disp-roll').innerText = urlParams.get('roll');
                 document.getElementById('disp-roll-hindi').innerText = urlParams.get('roll');
@@ -295,15 +314,30 @@
                 document.getElementById('disp-total2').innerText = urlParams.get('marks');
                 document.getElementById('disp-result').innerText = urlParams.get('result');
 
+                const photoData = localStorage.getItem('student_photo');
+                if(photoData) {
+                    document.getElementById('disp-photo').src = photoData;
+                    document.getElementById('disp-photo').style.display = 'block';
+                    document.getElementById('no-photo-text').style.display = 'none';
+                }
+
                 document.getElementById('input-form-box').style.display = 'none';
                 document.getElementById('certificate-box').style.display = 'block';
 
-                // QR code vich exact isse student da unique verified link lagvega
                 const currentUrl = window.location.href;
                 const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(currentUrl)}`;
                 document.getElementById('qr-code').src = qrApiUrl;
+            } else {
+                // Default view (agar koi pehli baar direct link khole toh default Sunil Kumar ka certificate dikhega, admin form nahi)
+                const defaultUrl = window.location.href.split('?')[0] + "?name=SUNIL%20KUMAR&roll=00150803159242&father=PREM%20KUMAR&dob=19-Jul-87&trade=Plumber&exam=Jul%202016&iti=PR03000039%20-%20Govt.%20ITI,%20Pathankot&marks=536&result=Pass";
+                window.location.href = defaultUrl;
             }
         };
+
+        function openAdminPanel() {
+            document.getElementById('certificate-box').style.display = 'none';
+            document.getElementById('input-form-box').style.display = 'block';
+        }
 
         function generateCertificate() {
             const name = document.getElementById('input-name').value;
@@ -316,10 +350,22 @@
             const marks = document.getElementById('input-marks').value;
             const result = document.getElementById('input-result').value;
 
-            // Student da data URL parameters vich encode karke page reload karega
+            const fileInput = document.getElementById('input-pic');
+            if (fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    localStorage.setItem('student_photo', e.target.result);
+                    redirectToCert(name, roll, father, dob, trade, exam, iti, marks, result);
+                }
+                reader.readAsDataURL(fileInput.files[0]);
+            } else {
+                redirectToCert(name, roll, father, dob, trade, exam, iti, marks, result);
+            }
+        }
+
+        function redirectToCert(name, roll, father, dob, trade, exam, iti, marks, result) {
             const baseUrl = window.location.href.split('?')[0];
             const targetUrl = `${baseUrl}?name=${encodeURIComponent(name)}&roll=${encodeURIComponent(roll)}&father=${encodeURIComponent(father)}&dob=${encodeURIComponent(dob)}&trade=${encodeURIComponent(trade)}&exam=${encodeURIComponent(exam)}&iti=${encodeURIComponent(iti)}&marks=${encodeURIComponent(marks)}&result=${encodeURIComponent(result)}`;
-
             window.location.href = targetUrl;
         }
     </script>
