@@ -1,0 +1,24 @@
+{
+  "00150803159242": {
+    "name": "SUNIL KUMAR",
+    "father": "PREM KUMAR",
+    "mother": "JITTO",
+    "dob": "19-Jul-1987",
+    "trade": "Plumber",
+    "examDate": "Jul 2016",
+    "iti": "Satluj Institute of Vocational Edu., Firozepur",
+    "marks": "536",
+    "status": "Pass"
+  },
+  "00150803159243": {
+    "name": "AMIT KUMAR",
+    "father": "RAMESH KUMAR",
+    "mother": "SUNITA",
+    "dob": "10-Aug-1995",
+    "trade": "Electrician",
+    "examDate": "Jul 2017",
+    "iti": "Govt ITI Pathankot",
+    "marks": "580",
+    "status": "Pass"
+  }
+}
