@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <title>National Trade Certificate (NTC) Generator</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <style>
+    body { font-family: Arial, Helvetica, sans-serif; background: #f0f2f5; padding: 20px; margin: 0; color: #000; }
+    
+    .form-box { background: white; max-width: 550px; margin: 0 auto 30px auto; padding: 25px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    h2 { text-align: center; color: #0d47a1; margin-top: 0; }
+    label { font-weight: bold; display: block; margin-top: 10px; font-size: 13px; }
+    input, select { width: 100%; padding: 8px; margin-top: 4px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
+    button { width: 100%; padding: 12px; background: #0d47a1; color: white; border: none; font-size: 16px; font-weight: bold; cursor: pointer; border-radius: 4px; margin-top: 15px; }
+
+    /* Certificate Layout */
+    .cert-container {
+      display: none;
+      background: #fff;
+      width: 820px;
+      margin: 0 auto;
+      padding: 30px 40px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+      position: relative;
+      box-sizing: border-box;
+      border: 1px solid #aaa;
+    }
+
+    /* Watermark Background */
+    .cert-container::before {
+      content: "";
+      position: absolute;
+      top: 20%;
+      left: 25%;
+      width: 50%;
+      height: 50%;
+      background: url('https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg') no-repeat center;
+      background-size: contain;
+      opacity: 0.05;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .cert-content { position: relative; z-index: 1; }
+
+    .top-info { display: flex; justify-content: space-between; font-size: 11px; font-weight: bold; }
+    
+    .header-sec { text-align: center; margin-top: 5px; margin-bottom: 15px; }
+    .header-sec img { width: 45px; }
+    .title-gov { font-size: 13px; font-weight: bold; }
+    .title-min { font-size: 11px; font-weight: bold; }
+    .title-ncvt { font-size: 12px; font-weight: bold; margin-top: 2px; }
+    .cert-title { font-size: 15px; font-weight: bold; text-decoration: underline; margin-top: 5px; color: #000; }
+
+    .photo-qr-area { display: flex; justify-content: space-between; position: absolute; top: 30px; right: 40px; gap: 10px; }
+    .photo-box { width: 85px; height: 100px; border: 1px solid #000; display: flex; align-items: center; justify-content: center; background: #f9f9f9; overflow: hidden; }
+    .photo-box img { width: 100%; height: 100%; object-fit: cover; }
+    #qrcode { border: 1px solid #000; padding: 4px; background: #fff; height: 90px; }
+
+    /* Content Fields Grid */
+    .details-table { width: 100%; margin-top: 20px; font-size: 12px; line-height: 2.1; }
+    .d-line { display: flex; margin-bottom: 3px; }
+    .d-lbl { font-weight: bold; width: 320px; }
+    .d-val { flex: 1; border-bottom: 1px dotted #000; font-weight: bold; padding-left: 5px; }
+
+    .inline-fields { display: flex; gap: 20px; width: 100%; }
+
+    .cert-footer { margin-top: 25px; display: flex; justify-content: space-between; align-items: flex-end; font-size: 11px; }
+    .disclaimer-text { font-size: 8px; margin-top: 15px; border-top: 1px solid #ccc; padding-top: 5px; line-height: 1.3; }
+
+    /* Pocket NTC Cut Line */
+    .cut-line { margin: 30px 0 20px 0; border-top: 1px dashed #000; text-align: center; position: relative; }
+    .cut-line span { background: #fff; padding: 0 10px; position: relative; top: -10px; font-size: 10px; font-weight: bold; }
+
+    /* Pocket Card Section */
+    .pocket-card-area { display: flex; justify-content: space-between; border: 1px solid #000; padding: 10px; font-size: 10px; }
+    .pocket-side { width: 48%; }
+    .pocket-title { text-align: center; font-weight: bold; font-size: 10px; border-bottom: 1px solid #000; padding-bottom: 3px; margin-bottom: 5px; }
+    .p-row { display: flex; margin-bottom: 3px; }
+    .p-lbl { width: 120px; font-weight: bold; }
+    .p-val { flex: 1; border-bottom: 1px dotted #000; }
+
+    @media print {
+      body { background: #fff; padding: 0; }
+      .form-box, .no-print { display: none !important; }
+      .cert-container { display: block !important; border: none; box-shadow: none; width: 100%; padding: 10px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="form-box no-print">
+  <h2>NTC Certificate Generator</h2>
+  <form id="certForm">
+    <label>Roll Number / Registration No:</label>
+    <input type="text" id="roll" value="00150803159242" required>
+
+    <label>Certificate No:</label>
+    <input type="text" id="certNo" value="1603212401" required>
+
+    <label>Student Name (Shri/Smt/Kumari):</label>
+    <input type="text" id="name" value="SUNIL KUMAR" required>
+
+    <label>Father/Husband Name:</label>
+    <input type="text" id="father" value="PREM KUMAR" required>
+
+    <label>Mother Name:</label>
+    <input type="text" id="mother" value="JITTO" required>
+
+    <label>Date of Birth:</label>
+    <input type="text" id="dob" value="19-Jul-1987" required>
+
+    <label>Aadhaar Card No (Placeholder):</label>
+    <input type="text" id="aadhaar" value="[Aadhaar Redacted]">
+
+    <label>Institute Name & Address:</label>
+    <input type="text" id="iti" value="PR03000188-Satluj Institute of Vocational Edu. Village Sandhehasham Backside, PN Bank Firozepur Zira Road" required>
+
+    <label>Trade Name:</label>
+    <input type="text" id="trade" value="Plumber" required>
+
+    <label>Training Duration:</label>
+    <input type="text" id="duration" value="2 semester" required>
+
+    <label>Admission Session:</label>
+    <input type="text" id="session" value="Aug 2015" required>
+
+    <label>Exam Month & Year:</label>
+    <input type="text" id="examMonth" value="Jul" style="width: 48%; display: inline-block;">
+    <input type="text" id="examYear" value="2016" style="width: 48%; display: inline-block;">
+
+    <label>Issue Date:</label>
+    <input type="text" id="issueDate" value="30-Dec-2016" required>
+
+    <button type="submit">Generate Certificate & Pocket Card</button>
+  </form>
+</div>
+
+<!-- NTC Certificate Layout -->
+<div class="cert-container" id="certArea">
+  <div class="cert-content">
+    
+    <div class="top-info">
+      <div>रोल नं. Roll No. <span id="c_roll">00150803159242</span></div>
+      <div style="margin-right: 180px;">प्रमाण-पत्र सं. Certificate No. <span id="c_certNo">1603212401</span></div>
+    </div>
+
+    <!-- Photo & QR Code -->
+    <div class="photo-qr-area">
+      <div class="photo-box">
+        <img src="https://via.placeholder.com/85x100?text=Photo" alt="Student Photo" id="studentImg">
+      </div>
+      <div id="qrcode"></div>
+    </div>
+
+    <div class="header-sec">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="Emblem">
+      <div class="title-gov">भारत सरकार<br>GOVERNMENT OF INDIA</div>
+      <div class="title-min">कौशल विकास एवं उद्यमिता मंत्रालय<br>MINISTRY OF SKILL DEVELOPMENT AND ENTREPRENEURSHIP</div>
+      <div class="title-ncvt">राष्ट्रीय व्यावसायिक प्रशिक्षण परिषद्<br>NATIONAL COUNCIL FOR VOCATIONAL TRAINING</div>
+      <div class="cert-title">राष्ट्रीय व्यवसाय प्रमाण-पत्र NATIONAL TRADE CERTIFICATE</div>
+    </div>
+
+    <div class="details-table">
+      <div class="d-line"><div class="d-lbl">श्री/श्रीमती/कुमारी Shri/Smt/Kumari</div><div class="d-val" id="c_name">SUNIL KUMAR</div></div>
+      <div class="d-line"><div class="d-lbl">पुत्र/पत्नी/पुत्री श्री Son/Wife/Daughter of Shri</div><div class="d-val" id="c_father">PREM KUMAR</div></div>
+      <div class="d-line"><div class="d-lbl">माता का नाम श्रीमती Mother's name Smt.</div><div class="d-val" id="c_mother">JITTO</div></div>
+      <div class="d-line"><div class="d-lbl">जन्म तिथि Date of Birth</div><div class="d-val" id="c_dob">19-Jul-1987</div></div>
+      <div class="d-line"><div class="d-lbl">संस्था का नाम Name of the Institute</div><div class="d-val" id="c_iti">PR03000188-Satluj Institute of Vocational Edu. Village Sandhehasham Backside, PN Bank Firozepur Zira Road</div></div>
+      <div class="d-line"><div class="d-lbl">व्यवसाय का नाम Name of the Trade</div><div class="d-val" id="c_trade">Plumber</div></div>
+      
+      <div class="inline-fields">
+        <div class="d-line" style="flex:1;"><div class="d-lbl" style="width:180px;">प्रशिक्षण अवधि Training Duration</div><div class="d-val" id="c_duration">2 semester</div></div>
+        <div class="d-line" style="flex:1;"><div class="d-lbl" style="width:180px;">प्रवेश सत्र Admission Session</div><div class="d-val" id="c_session">Aug 2015</div></div>
+      </div>
+
+      <div class="d-line">
+        <div class="d-lbl">को अखिल भारतीय व्यवसाय परीक्षा having passed All India Trade Test, माह Month</div>
+        <div class="d-val" id="c_month" style="text-align:center;">Jul</div>
+        <div style="font-weight:bold; padding: 0 10px;">वर्ष Year</div>
+        <div class="d-val" id="c_year" style="text-align:center;">2016</div>
+      </div>
+      <div style="font-weight: bold; margin-top: 5px;">उत्तीर्ण होने पर यह व्यवसाय प्रमाण-पत्र प्रदान किया जाता है। is hereby awarded this Trade Certificate.</div>
+    </div>
+
+    <div class="cert-footer">
+      <div>दिनांक Date: <span id="c_issueDate">30-Dec-2016</span></div>
+      <div style="text-align: center;">
+        <div style="font-family: 'Brush Script MT', cursive; font-size: 16px; font-weight: bold; color: #003399;">Member Secretary</div>
+        <div style="font-weight: bold;">सदस्य सचिव Member Secretary<br>राष्ट्रीय व्यावसायिक प्रशिक्षण परिषद National Council For Vocational Training</div>
+      </div>
+    </div>
+
+    <div class="disclaimer-text">
+      This is a computer generated certificate and it does not require any physical signature or attestation. All contents of this certificate can be verified for authenticity by the process of online verification through scanning the QR code printed above. The verification can also be done by visiting NCVT MIS portal (http://ncvtmis.gov.in/Pages/Certification/Validate.aspx) and entering the e-Certificate number.
+    </div>
+
+    <!-- Cut line for Pocket NTC -->
+    <div class="cut-line">
+      <span>--- Cut from this line and use as pocket NTC ---</span>
+    </div>
+
+    <!-- Pocket NTC Front & Back -->
+    <div class="pocket-card-area">
+      <!-- Front -->
+      <div class="pocket-side">
+        <div class="pocket-title">- FRONT -<br>भारत सरकार GOVT. OF INDIA<br>MINISTRY OF SKILL DEVELOPMENT AND ENTREPRENEURSHIP<br>NATIONAL COUNCIL FOR VOCATIONAL TRAINING<br>NATIONAL TRADE CERTIFICATE</div>
+        <div class="p-row"><div class="p-lbl">Shri/Smt/Kumari</div><div class="p-val" id="p_name">SUNIL KUMAR</div></div>
+        <div class="p-row"><div class="p-lbl">Son/Wife/Daughter of</div><div class="p-val" id="p_father">PREM KUMAR</div></div>
+        <div class="p-row"><div class="p-lbl">Aadhaar No.</div><div class="p-val" id="p_aadhaar">[Aadhaar Redacted]</div></div>
+        <div class="p-row"><div class="p-lbl">Date of Birth</div><div class="p-val" id="p_dob">19-Jul-1987</div></div>
+        <div class="p-row"><div class="p-lbl">Institute</div><div class="p-val" id="p_iti">PR03000188-Satluj Institute...</div></div>
+      </div>
+
+      <!-- Back -->
+      <div class="pocket-side">
+        <div class="pocket-title">- BACK -</div>
+        <div class="p-row"><div class="p-lbl">Training Duration</div><div class="p-val" id="p_duration">2 semester</div></div>
+        <div class="p-row"><div class="p-lbl">Admission Session</div><div class="p-val" id="p_session">Aug 2015</div></div>
+        <div class="p-row"><div class="p-lbl">AITT passed Month</div><div class="p-val"><span id="p_month">Jul</span> <span id="p_year">2016</span></div></div>
+        <div class="p-row"><div class="p-lbl">Trade</div><div class="p-val" id="p_trade">Plumber</div></div>
+        <div class="p-row"><div class="p-lbl">Roll No.</div><div class="p-val" id="p_roll">00150803159242</div></div>
+        <div class="p-row"><div class="p-lbl">Cert No.</div><div class="p-val" id="p_certNo">1603212401</div></div>
+        <div style="text-align: right; margin-top: 10px; font-weight: bold; font-size: 8px;">
+          Member Secretary NCVT
+        </div>
+      </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 20px;" class="no-print">
+      <button onclick="window.print()" style="padding: 10px 25px; background: #28a745; color: white; border: none; font-size: 15px; font-weight: bold; cursor: pointer; border-radius: 4px;">🖨️ Print Certificate / Save PDF</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  document.getElementById('certForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const roll = document.getElementById('roll').value.trim();
+    const certNo = document.getElementById('certNo').value.trim();
+    const name = document.getElementById('name').value.trim();
+    const father = document.getElementById('father').value.trim();
+    const mother = document.getElementById('mother').value.trim();
+    const dob = document.getElementById('dob').value.trim();
+    const aadhaar = document.getElementById('aadhaar').value.trim();
+    const iti = document.getElementById('iti').value.trim();
+    const trade = document.getElementById('trade').value.trim();
+    const duration = document.getElementById('duration').value.trim();
+    const session = document.getElementById('session').value.trim();
+    const examMonth = document.getElementById('examMonth').value.trim();
+    const examYear = document.getElementById('examYear').value.trim();
+    const issueDate = document.getElementById('issueDate').value.trim();
+
+    // Fill Certificate
+    document.getElementById('c_roll').innerText = roll;
+    document.getElementById('c_certNo').innerText = certNo;
+    document.getElementById('c_name').innerText = name;
+    document.getElementById('c_father').innerText = father;
+    document.getElementById('c_mother').innerText = mother;
+    document.getElementById('c_dob').innerText = dob;
+    document.getElementById('c_iti').innerText = iti;
+    document.getElementById('c_trade').innerText = trade;
+    document.getElementById('c_duration').innerText = duration;
+    document.getElementById('c_session').innerText = session;
+    document.getElementById('c_month').innerText = examMonth;
+    document.getElementById('c_year').innerText = examYear;
+    document.getElementById('c_issueDate').innerText = issueDate;
+
+    // Fill Pocket Card
+    document.getElementById('p_name').innerText = name;
+    document.getElementById('p_father').innerText = father;
+    document.getElementById('p_aadhaar').innerText = aadhaar;
+    document.getElementById('p_dob').innerText = dob;
+    document.getElementById('p_iti').innerText = iti.substring(0, 30) + '...';
+    document.getElementById('p_duration').innerText = duration;
+    document.getElementById('p_session').innerText = session;
+    document.getElementById('p_month').innerText = examMonth;
+    document.getElementById('p_year').innerText = examYear;
+    document.getElementById('p_trade').innerText = trade;
+    document.getElementById('p_roll').innerText = roll;
+    document.getElementById('p_certNo').innerText = certNo;
+
+    // Fast QR Link
+    let params = new URLSearchParams({ r: roll, n: name, f: father, t: trade, i: iti, d: dob });
+    let verifyUrl = "https://ncvtmisgo.github.io/ncvt-verification/verify.html?" + params.toString();
+
+    document.getElementById("qrcode").innerHTML = "";
+    new QRCode(document.getElementById("qrcode"), {
+      text: verifyUrl,
+      width: 80,
+      height: 80,
+      correctLevel : QRCode.CorrectLevel.L
+    });
+
+    document.getElementById('certArea').style.display = 'block';
+    window.scrollTo({ top: document.getElementById('certArea').offsetTop, behavior: 'smooth' });
+  });
+</script>
+
+</body>
+</html>
