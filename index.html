@@ -1,382 +1,93 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NCVT ITI Permanent Certificate Verification Portal</title>
-    <style>
-        @page {
-            size: A4 landscape;
-            margin: 10mm;
-        }
-        body { font-family: Arial, sans-serif; background: #f4f7f6; margin: 0; padding: 20px; }
-        .no-print { background: #fff; padding: 20px; border-radius: 8px; max-width: 950px; margin: auto; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        .no-print h3 { color: #003366; margin-top: 0; text-align: center; }
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .form-group { margin-bottom: 10px; }
-        .form-group label { display: block; font-size: 12px; font-weight: bold; color: #333; margin-bottom: 3px; }
-        .form-group input { width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; font-size: 13px; }
-        .gen-btn { grid-column: span 2; background: #003366; color: white; border: none; padding: 12px; font-size: 15px; font-weight: bold; border-radius: 4px; cursor: pointer; margin-top: 10px; }
-        .gen-btn:hover { background: #002244; }
-
-        /* Certificate Styling - A4 Landscape */
-        .container { 
-            width: 1050px; 
-            max-width: 100%; 
-            min-height: 700px;
-            margin: auto; 
-            background: white; 
-            padding: 30px; 
-            box-sizing: border-box;
-            border-radius: 8px; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
-            display: block; 
-            position: relative; 
-        }
-        
-        .top-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
-        
-        .student-photo-box { width: 90px; height: 110px; border: 1px solid #999; background: #eee; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-        .student-photo-box img { width: 100%; height: 100%; object-fit: cover; }
-
-        .emblem-box { text-align: center; width: 90px; }
-        .emblem-box img { 
-            width: 75px; 
-            height: auto; 
-            filter: drop-shadow(0px 2px 2px rgba(0,0,0,0.2)) brightness(1.25) sepia(1) hue-rotate(5deg) saturate(450%); 
-        }
-        
-        .qr-container img { width: 105px; height: 105px; border: 1px solid #ccc; padding: 3px; background: white; }
-        
-        .hindi-reg { font-size: 12px; color: #444; margin-bottom: 2px; text-align: left; }
-        .roll-top { font-size: 13px; font-weight: bold; color: #000; text-align: right; }
-
-        h2 { text-align: center; color: #003366; font-size: 18px; margin: 10px 0 5px 0; }
-        .sub-title { text-align: center; font-size: 13px; font-weight: bold; margin-bottom: 15px; color: #222; }
-
-        .header-info { margin-bottom: 15px; border-bottom: 2px solid #003366; padding-bottom: 10px; font-size: 13px; line-height: 1.6; }
-        .info-row { display: flex; justify-content: space-between; margin-bottom: 4px; }
-        
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { border: 1px solid #bbb; padding: 7px; text-align: center; font-size: 12px; }
-        th { background-color: #003366; color: white; font-weight: bold; }
-        
-        .result-section { margin-top: 15px; font-size: 14px; display: flex; justify-content: space-between; align-items: center; }
-        .verified { background-color: #e2f0d9; color: #385723; padding: 9px; text-align: center; font-weight: bold; margin-top: 15px; border-radius: 4px; font-size: 13px; }
-        .footer-note { margin-top: 15px; font-size: 10.5px; color: #555; text-align: justify; line-height: 1.4; }
-        .sign-area { display: flex; justify-content: flex-end; margin-top: 20px; }
-        .sign-box { text-align: center; font-size: 12px; font-weight: bold; }
-
-        .action-btns { display: flex; gap: 10px; margin-top: 20px; }
-        .print-btn { flex: 1; padding: 12px; background: #28a745; color: white; border: none; font-size: 16px; border-radius: 4px; cursor: pointer; font-weight: bold; }
-        .print-btn:hover { background: #218838; }
-        .edit-btn { flex: 1; padding: 12px; background: #003366; color: white; border: none; font-size: 16px; border-radius: 4px; cursor: pointer; font-weight: bold; }
-        .edit-btn:hover { background: #002244; }
-
-        @media print {
-            .no-print, .action-btns { display: none !important; }
-            body { background: white; padding: 0; margin: 0; }
-            .container { box-shadow: none; padding: 10px; display: block !important; border: none; width: 100%; }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Permanent ITI Certificate & Marksheet Portal</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f0f2f5; padding: 20px; }
+    .form-box { background: white; padding: 25px; max-width: 650px; margin: auto; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    h2 { text-align: center; color: #0d47a1; }
+    .field { margin-bottom: 12px; }
+    label { display: block; font-weight: bold; margin-bottom: 4px; }
+    input { width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
+    button { width: 100%; padding: 12px; background: #0d47a1; color: white; border: none; font-size: 16px; font-weight: bold; cursor: pointer; border-radius: 4px; margin-top: 10px; }
+    button:hover { background: #1565c0; }
+    .result { margin-top: 20px; text-align: center; display: none; padding: 15px; border: 1px solid #c8e6c9; background: #e8f5e9; border-radius: 6px; }
+    .qr-container { margin: 15px auto; display: flex; justify-content: center; }
+    .links a { display: inline-block; margin: 8px 5px; padding: 10px 15px; background: #2e7d32; color: white; text-decoration: none; border-radius: 4px; font-weight: bold; }
+    .links a.ms { background: #e65100; }
+  </style>
 </head>
 <body>
 
-    <!-- Admin Panel (Data Entry for New Students) -->
-    <div class="no-print" id="input-form-box" style="display: none;">
-        <h3>Permanent ITI Certificate Database Portal</h3>
-        <p style="text-align:center; font-size:12px; color:#666;">Yithe student da data bharo te permanent link/QR generate karo jo 2 saal baad vi chalega.</p>
-        <div class="form-grid">
-            <div class="form-group">
-                <label>Roll Number (Unique ID):</label>
-                <input type="text" id="input-roll" value="00150803159242">
-            </div>
-            <div class="form-group">
-                <label>Student Name:</label>
-                <input type="text" id="input-name" value="SUNIL KUMAR">
-            </div>
-            <div class="form-group">
-                <label>Father's Name:</label>
-                <input type="text" id="input-father" value="PREM KUMAR">
-            </div>
-            <div class="form-group">
-                <label>Date of Birth:</label>
-                <input type="text" id="input-dob" value="19-Jul-87">
-            </div>
-            <div class="form-group">
-                <label>Trade Name:</label>
-                <input type="text" id="input-trade" value="Plumber">
-            </div>
-            <div class="form-group">
-                <label>Exam Month-Year:</label>
-                <input type="text" id="input-exam" value="Jul 2016">
-            </div>
-            <div class="form-group" style="grid-column: span 2;">
-                <label>ITI Name & Address:</label>
-                <input type="text" id="input-iti" value="PR03000039 - Govt. ITI, Pathankot-NH 44, near Nalwa Bridge, Dhaki, Pathankot, Punjab 145001">
-            </div>
-            <div class="form-group">
-                <label>Total Marks Secured (Out of 700):</label>
-                <input type="text" id="input-marks" value="536">
-            </div>
-            <div class="form-group">
-                <label>Result Status:</label>
-                <input type="text" id="input-result" value="Pass">
-            </div>
-            <div class="form-group" style="grid-column: span 2;">
-                <label>Student Photo URL (Paste Image Link or Base64):</label>
-                <input type="text" id="input-pic" value="https://i.imgur.com/6VBx3io.png" placeholder="Paste image link here">
-            </div>
-            <button class="gen-btn" onclick="saveAndGenerate()">Generate Permanent Verified Link & QR</button>
-        </div>
+<div class="form-box">
+  <h2>Permanent ITI Database Portal</h2>
+  
+  <div class="field"><label>Roll Number (Unique ID):</label><input type="text" id="roll" value="00150803159242"></div>
+  <div class="field"><label>Student Name:</label><input type="text" id="name" value="SUNIL KUMAR"></div>
+  <div class="field"><label>Father's Name:</label><input type="text" id="father" value="PREM KUMAR"></div>
+  <div class="field"><label>Mother's Name:</label><input type="text" id="mother" value="JITTO"></div>
+  <div class="field"><label>Date of Birth:</label><input type="text" id="dob" value="19-Jul-1987"></div>
+  <div class="field"><label>Trade Name:</label><input type="text" id="trade" value="Plumber"></div>
+  <div class="field"><label>Exam Month-Year:</label><input type="text" id="examDate" value="Jul 2016"></div>
+  <div class="field"><label>ITI Name & Address:</label><input type="text" id="iti" value="Satluj Institute of Vocational Edu., Firozepur"></div>
+  <div class="field"><label>Total Marks Secured:</label><input type="text" id="marks" value="536"></div>
+  <div class="field"><label>Result Status:</label><input type="text" id="status" value="Pass"></div>
+
+  <button onclick="generateLinks()">Generate Verified Certificate & Marksheet Links</button>
+
+  <div class="result" id="resultBox">
+    <h3>✅ Permanent Verification Generated</h3>
+    <div class="qr-container" id="qrcode"></div>
+    <div class="links">
+      <a id="certLink" target="_blank">📜 View / Verify Certificate</a>
+      <a id="marksheetLink" class="ms" target="_blank">📊 View / Verify Marksheet</a>
     </div>
+  </div>
+</div>
 
-    <!-- Certificate View Container -->
-    <div class="container" id="certificate-box">
-        
-        <div class="top-header">
-            <div>
-                <div class="hindi-reg">अनुक्रमांक: <span id="disp-roll-hindi">00150803159242</span></div>
-                <div class="student-photo-box" style="margin-top: 5px;">
-                    <img id="disp-photo" src="" alt="Photo">
-                </div>
-            </div>
-            <div class="emblem-box">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="Golden National Emblem">
-            </div>
-            <div class="qr-container">
-                <img id="qr-code" src="" alt="Government Verification QR Code">
-            </div>
-        </div>
+<script>
+function generateLinks() {
+  const roll = document.getElementById('roll').value.trim();
+  if(!roll) { alert('Roll number is required'); return; }
 
-        <div class="roll-top">Roll No.: <span id="disp-roll">00150803159242</span></div>
+  // Student Data Object
+  const data = {
+    roll: roll,
+    name: document.getElementById('name').value,
+    father: document.getElementById('father').value,
+    mother: document.getElementById('mother').value,
+    dob: document.getElementById('dob').value,
+    trade: document.getElementById('trade').value,
+    examDate: document.getElementById('examDate').value,
+    iti: document.getElementById('iti').value,
+    marks: document.getElementById('marks').value,
+    status: document.getElementById('status').value
+  };
 
-        <h2>STATEMENT OF MARKS FOR AITT CONDUCTED UNDER THE AEGIS OF NCVT</h2>
-        <div class="sub-title">Academic Session - Aug 2015 &nbsp;|&nbsp; Semester - 2 (CTS Semester System) Engineering Trades</div>
-        
-        <div class="header-info">
-            <div class="info-row">
-                <span><strong>Name:</strong> <span id="disp-name">SUNIL KUMAR</span></span>
-                <span><strong>Date of Birth:</strong> <span id="disp-dob">19-Jul-87</span></span>
-            </div>
-            <div class="info-row">
-                <span><strong>Father/Guardian Name:</strong> <span id="disp-father">PREM KUMAR</span></span>
-                <span><strong>Exam Month-Year:</strong> <span id="disp-exam">Jul 2016</span></span>
-            </div>
-            <div class="info-row">
-                <span><strong>Trade Name:</strong> <span id="disp-trade">Plumber</span></span>
-                <span><strong>Trainee Type:</strong> REGULAR</span>
-            </div>
-            <div style="margin-top: 4px;">
-                <strong>ITI Name & Address:</strong> <span id="disp-iti">PR03000039 - Govt. ITI, Pathankot-NH 44, near Nalwa Bridge, Dhaki, Pathankot, Punjab 145001</span>
-            </div>
-        </div>
+  // URL Query Parameters Encoding
+  const queryStr = new URLSearchParams(data).toString();
 
-        <table>
-            <tr>
-                <th>S. No.</th>
-                <th>Paper</th>
-                <th>Paper Max. Marks</th>
-                <th>Paper Min. Marks</th>
-                <th>Total Marks Secured</th>
-                <th>Subject</th>
-                <th>Subject Max. Marks</th>
-                <th>Subject Min. Marks</th>
-                <th>Marks Secured</th>
-            </tr>
-            <tr>
-                <td rowspan="2">1</td>
-                <td rowspan="2">Paper-I</td>
-                <td rowspan="2">170</td>
-                <td rowspan="2">68 (40%)</td>
-                <td rowspan="2">80</td>
-                <td>Trade Theory</td>
-                <td>150</td>
-                <td>37.5 (25)%</td>
-                <td>62</td>
-            </tr>
-            <tr>
-                <td>Sessional</td>
-                <td>20</td>
-                <td>-</td>
-                <td>18</td>
-            </tr>
-            <tr>
-                <td rowspan="3">2</td>
-                <td rowspan="3">Paper-II</td>
-                <td rowspan="3">135</td>
-                <td rowspan="3">54 (40%)</td>
-                <td rowspan="3">97</td>
-                <td>Part-A Workshop Cal. & Sci.</td>
-                <td>75</td>
-                <td>18.75 (25)%</td>
-                <td>60</td>
-            </tr>
-            <tr>
-                <td>Sessional</td>
-                <td>10</td>
-                <td>-</td>
-                <td>9</td>
-            </tr>
-            <tr>
-                <td>Part-B Employability Skills</td>
-                <td>50</td>
-                <td>12.5 (25)%</td>
-                <td>28</td>
-            </tr>
-            <tr>
-                <td rowspan="2">3</td>
-                <td rowspan="2">Paper-III</td>
-                <td rowspan="2">95</td>
-                <td rowspan="2">38 (40%)</td>
-                <td rowspan="2">68</td>
-                <td>Engg. Drawing</td>
-                <td>75</td>
-                <td>18.75 (25)%</td>
-                <td>49</td>
-            </tr>
-            <tr>
-                <td>Sessional</td>
-                <td>20</td>
-                <td>-</td>
-                <td>19</td>
-            </tr>
-            <tr>
-                <td rowspan="2">4</td>
-                <td rowspan="2">Practical</td>
-                <td rowspan="2">300</td>
-                <td rowspan="2">180 (60%)</td>
-                <td rowspan="2">291</td>
-                <td>Trade Practical</td>
-                <td>270</td>
-                <td>-</td>
-                <td>262</td>
-            </tr>
-            <tr>
-                <td>Sessional</td>
-                <td>30</td>
-                <td>-</td>
-                <td>29</td>
-            </tr>
-            <tr>
-                <td colspan="2"><strong>Total</strong></td>
-                <td><strong>700</strong></td>
-                <td>-</td>
-                <td><strong><span id="disp-total">536</span></strong></td>
-                <td colspan="3"><strong>Total</strong></td>
-                <td><strong><span id="disp-total2">536</span></strong></td>
-            </tr>
-        </table>
+  const baseURL = window.location.origin + window.location.pathname.replace('index.html', '');
+  const certURL = `${baseURL}verify.html?${queryStr}`;
+  const marksheetURL = `${baseURL}marksheet.html?${queryStr}`;
 
-        <div class="result-section">
-            <div><strong>RESULT DATE:</strong> 30-Dec-16</div>
-            <div><strong>RESULT:</strong> <span style="color:green; font-weight:bold;"><span id="disp-result">Pass</span></span></div>
-        </div>
+  // Update Links
+  document.getElementById('certLink').href = certURL;
+  document.getElementById('marksheetLink').href = marksheetURL;
 
-        <div class="sign-area">
-            <div class="sign-box">
-                <div style="font-family: cursive; font-size: 15px; color: #003366;">Member Secretary</div>
-                <div>Member Secretary NCVT</div>
-            </div>
-        </div>
+  // Generate QR for Certificate Link
+  document.getElementById('qrcode').innerHTML = "";
+  new QRCode(document.getElementById("qrcode"), {
+    text: certURL,
+    width: 150,
+    height: 150
+  });
 
-        <div class="verified">
-            ✓ STATUS: VERIFIED AUTHENTIC CERTIFICATE (NCVT MIS PORTAL)
-        </div>
+  document.getElementById('resultBox').style.display = 'block';
+}
+</script>
 
-        <div class="footer-note">
-            <p><strong>दिनांक/Date:</strong> 12-Jun-22 &nbsp;&nbsp; This is a computer generated Mark Sheet and it does not require any physical signature or attestation. All contents of this Mark Sheet can be verified for authenticity by the process of online verification through scanning the QR code printed above. The verification can also be done by visiting NCVT MIS portal (http://ncvtmis.gov.in/Pages/MarkSheet/Validate.aspx) and entering the roll number.</p>
-            <p>The NCVT shall not be responsible for any direct or indirect financial losses, any loss of goodwill or reputation, or any other loss or damage caused by any incorrect / fraudulent information in this computer generated certificate that cannot be validated by the NCVT MIS portal. NCVT also reserves the right to take appropriate legal action in such cases.</p>
-        </div>
-
-        <div class="action-btns">
-            <button class="print-btn" onclick="window.print()">Print / Save Certificate as PDF</button>
-            <button class="edit-btn" onclick="openAdminPanel()">Add New Student / Admin Portal</button>
-        </div>
-    </div>
-
-    <script>
-        // PERMANENT DATABASE OF STUDENTS (Yithe tusi apne sare students da data hamesha layi save rakh sakde ho)
-        const studentDatabase = {
-            "00150803159242": {
-                name: "SUNIL KUMAR",
-                father: "PREM KUMAR",
-                dob: "19-Jul-87",
-                trade: "Plumber",
-                exam: "Jul 2016",
-                iti: "PR03000039 - Govt. ITI, Pathankot-NH 44, near Nalwa Bridge, Dhaki, Pathankot, Punjab 145001",
-                marks: "536",
-                result: "Pass",
-                photo: "https://i.imgur.com/6VBx3io.png"
-            },
-            // Jekar koi nawa student add karna hove, ta ohi roll number nal ithe data likh do:
-            "1234567890": {
-                name: "AMAN KUMAR",
-                father: "RAM LAL",
-                dob: "10-Jan-95",
-                trade: "Electrician",
-                exam: "Jul 2021",
-                iti: "PR03000039 - Govt. ITI, Pathankot",
-                marks: "600",
-                result: "Pass",
-                photo: "https://i.imgur.com/6VBx3io.png"
-            }
-        };
-
-        window.onload = function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const rollParam = urlParams.get('roll');
-
-            if (rollParam && studentDatabase[rollParam]) {
-                const s = studentDatabase[rollParam];
-                document.getElementById('disp-name').innerText = s.name;
-                document.getElementById('disp-roll').innerText = rollParam;
-                document.getElementById('disp-roll-hindi').innerText = rollParam;
-                document.getElementById('disp-father').innerText = s.father;
-                document.getElementById('disp-dob').innerText = s.dob;
-                document.getElementById('disp-trade').innerText = s.trade;
-                document.getElementById('disp-exam').innerText = s.exam;
-                document.getElementById('disp-iti').innerText = s.iti;
-                document.getElementById('disp-total').innerText = s.marks;
-                document.getElementById('disp-total2').innerText = s.marks;
-                document.getElementById('disp-result').innerText = s.result;
-                document.getElementById('disp-photo').src = s.photo;
-
-                document.getElementById('input-form-box').style.display = 'none';
-                document.getElementById('certificate-box').style.display = 'block';
-
-                // QR code will point permanently to this student's unique roll number link
-                const currentUrl = window.location.href;
-                const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(currentUrl)}`;
-                document.getElementById('qr-code').src = qrApiUrl;
-            } else {
-                // Default: load Sunil Kumar if no roll is specified
-                window.location.href = window.location.href.split('?')[0] + "?roll=00150803159242";
-            }
-        };
-
-        function openAdminPanel() {
-            document.getElementById('certificate-box').style.display = 'none';
-            document.getElementById('input-form-box').style.display = 'block';
-        }
-
-        function saveAndGenerate() {
-            const roll = document.getElementById('input-roll').value;
-            const name = document.getElementById('input-name').value;
-            const father = document.getElementById('input-father').value;
-            const dob = document.getElementById('input-dob').value;
-            const trade = document.getElementById('input-trade').value;
-            const exam = document.getElementById('input-exam').value;
-            const iti = document.getElementById('input-iti').value;
-            const marks = document.getElementById('input-marks').value;
-            const result = document.getElementById('input-result').value;
-            const photo = document.getElementById('input-pic').value;
-
-            alert("Data generated! Code copy karke apni studentDatabase list vich zaroor save kar lao taaki permanent hove.");
-            
-            const baseUrl = window.location.href.split('?')[0];
-            window.location.href = `${baseUrl}?roll=${encodeURIComponent(roll)}`;
-        }
-    </script>
 </body>
 </html>
