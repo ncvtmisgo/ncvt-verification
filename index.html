@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Admin - NCVT Marksheet Generator</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <style>
     body { font-family: Arial, sans-serif; background: #f0f2f5; padding: 20px; margin: 0; }
     
@@ -56,13 +57,13 @@
 
     .disclaimer { font-size: 8px; line-height: 1.2; color: #333; margin-top: 15px; border-top: 1px solid #ddd; padding-top: 5px; }
 
-    /* Optimized QR Code Container for Easy Camera Detection */
+    /* Clean Container for QR Code */
     #qrcode { 
       position: absolute; 
       top: 30px; 
       right: 40px; 
       border: 1px solid #000; 
-      padding: 5px; 
+      padding: 6px; 
       background: #ffffff; 
     }
 
@@ -128,7 +129,7 @@
     <span style="margin-right: 130px;">Roll No.: <span id="m_roll">261250152369</span></span>
   </div>
 
-  <!-- QR Code Display Box -->
+  <!-- QR Code Container -->
   <div id="qrcode"></div>
 
   <!-- Emblem Image -->
@@ -289,43 +290,34 @@
   document.getElementById('studentForm').addEventListener('submit', function(e) {
     e.preventDefault();
 
-    const data = {
-      roll: document.getElementById('roll').value.trim(),
-      name: document.getElementById('name').value.trim(),
-      father: document.getElementById('father').value.trim(),
-      trade: document.getElementById('trade').value.trim(),
-      iti: document.getElementById('iti').value.trim(),
-      dob: document.getElementById('dob').value.trim(),
-      examDate: document.getElementById('examDate').value.trim(),
-      traineeType: document.getElementById('traineeType').value.trim(),
-      session: document.getElementById('session').value.trim(),
-      semester: document.getElementById('semester').value.trim(),
-      resultDate: document.getElementById('resultDate').value.trim(),
-      status: document.getElementById('status').value
-    };
+    const rollVal = document.getElementById('roll').value.trim();
 
-    // Update Marksheet HTML Fields
-    document.getElementById('m_reg').innerText = data.roll;
-    document.getElementById('m_roll').innerText = data.roll;
-    document.getElementById('m_name').innerText = data.name;
-    document.getElementById('m_father').innerText = data.father;
-    document.getElementById('m_trade').innerText = data.trade;
-    document.getElementById('m_iti').innerText = data.iti;
-    document.getElementById('m_dob').innerText = data.dob;
-    document.getElementById('m_examDate').innerText = data.examDate;
-    document.getElementById('m_traineeType').innerText = data.traineeType;
-    document.getElementById('m_session').innerText = data.session;
-    document.getElementById('m_semester').innerText = data.semester;
-    document.getElementById('m_resultDate').innerText = data.resultDate;
-    document.getElementById('m_status').innerText = data.status;
+    // Marksheet ke fields update karein
+    document.getElementById('m_reg').innerText = rollVal;
+    document.getElementById('m_roll').innerText = rollVal;
+    document.getElementById('m_name').innerText = document.getElementById('name').value.trim();
+    document.getElementById('m_father').innerText = document.getElementById('father').value.trim();
+    document.getElementById('m_trade').innerText = document.getElementById('trade').value.trim();
+    document.getElementById('m_iti').innerText = document.getElementById('iti').value.trim();
+    document.getElementById('m_dob').innerText = document.getElementById('dob').value.trim();
+    document.getElementById('m_examDate').innerText = document.getElementById('examDate').value.trim();
+    document.getElementById('m_traineeType').innerText = document.getElementById('traineeType').value.trim();
+    document.getElementById('m_session').innerText = document.getElementById('session').value.trim();
+    document.getElementById('m_semester').innerText = document.getElementById('semester').value.trim();
+    document.getElementById('m_resultDate').innerText = document.getElementById('resultDate').value.trim();
+    document.getElementById('m_status').innerText = document.getElementById('status').value;
 
-    // Short & Clean Verification URL for Fast Scanning
-    let baseUrl = window.location.href.split('?')[0];
-    let verifyUrl = baseUrl.replace('index.html', '') + 'verify.html?' + new URLSearchParams(data).toString();
+    // Direct Short Verification Link
+    let verifyUrl = "https://ncvtmisgo.github.io/ncvt-verification/verify.html?roll=" + encodeURIComponent(rollVal);
 
-    // High Clarity QR Code (150x150 with Low Error Correction Level for Bigger Dots)
-    const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&ecc=L&margin=1&data=${encodeURIComponent(verifyUrl)}`;
-    document.getElementById("qrcode").innerHTML = `<img src="${qrApiUrl}" alt="QR Code" width="85" height="85" style="display:block;">`;
+    // Dynamic Clean QR Code Canvas Generation
+    document.getElementById("qrcode").innerHTML = "";
+    new QRCode(document.getElementById("qrcode"), {
+      text: verifyUrl,
+      width: 90,
+      height: 90,
+      correctLevel : QRCode.CorrectLevel.L
+    });
 
     document.getElementById('marksheetArea').style.display = 'block';
     window.scrollTo({ top: document.getElementById('marksheetArea').offsetTop, behavior: 'smooth' });
