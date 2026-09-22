@@ -6,15 +6,12 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <style>
     body { font-family: Arial, sans-serif; background: #f0f2f5; padding: 20px; margin: 0; }
-    
-    /* Form Section */
     .form-box { background: white; max-width: 500px; margin: 0 auto 30px auto; padding: 25px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
     h2 { text-align: center; color: #0d47a1; margin-top: 0; }
     label { font-weight: bold; display: block; margin-top: 10px; font-size: 13px; }
     input, select { width: 100%; padding: 8px; margin-top: 4px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
     button { width: 100%; padding: 12px; background: #0d47a1; color: white; border: none; font-size: 16px; font-weight: bold; cursor: pointer; border-radius: 4px; margin-top: 15px; }
 
-    /* Printable Marksheet Layout */
     .marksheet-border {
       display: none;
       background: white;
@@ -30,40 +27,33 @@
     }
 
     .top-bar { display: flex; justify-content: space-between; font-size: 11px; font-weight: bold; margin-bottom: 10px; }
-    
     .emblem-container { text-align: center; margin-bottom: 5px; }
     .emblem-container img { width: 45px; height: auto; }
-
     .header-title { text-align: center; font-size: 12px; font-weight: bold; text-transform: uppercase; margin-bottom: 3px; }
     .sub-title { text-align: center; font-size: 11px; font-weight: bold; margin-bottom: 15px; }
 
-    /* Details Grid */
     .details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 20px; font-size: 11px; margin-bottom: 15px; line-height: 1.4; }
     .d-row { display: flex; }
     .d-label { width: 140px; font-weight: bold; text-align: right; padding-right: 8px; }
     .d-val { flex: 1; border-bottom: 1px dotted #000; font-weight: bold; }
 
-    /* Marks Table */
     .marks-table { width: 100%; border-collapse: collapse; font-size: 10px; text-align: center; margin-bottom: 15px; }
     .marks-table th, .marks-table td { border: 1px solid #777; padding: 4px 2px; }
     .marks-table th { background: #f9f9f9; font-weight: bold; }
     .text-left { text-align: left; padding-left: 5px !important; }
 
-    /* Footer Section */
     .footer-dates { font-size: 10px; font-weight: bold; margin-bottom: 30px; }
     .signature-area { display: flex; justify-content: space-between; align-items: flex-end; font-size: 10px; margin-top: 20px; }
     .sig-box { text-align: right; }
     .sig-line { font-weight: bold; margin-top: 5px; }
-
     .disclaimer { font-size: 8px; line-height: 1.2; color: #333; margin-top: 15px; border-top: 1px solid #ddd; padding-top: 5px; }
 
-    /* Clean Container for QR Code */
     #qrcode { 
       position: absolute; 
       top: 30px; 
       right: 40px; 
       border: 1px solid #000; 
-      padding: 6px; 
+      padding: 5px; 
       background: #ffffff; 
     }
 
@@ -129,10 +119,8 @@
     <span style="margin-right: 130px;">Roll No.: <span id="m_roll">261250152369</span></span>
   </div>
 
-  <!-- QR Code Container -->
   <div id="qrcode"></div>
 
-  <!-- Emblem Image -->
   <div class="emblem-container">
     <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="Emblem of India">
   </div>
@@ -153,7 +141,6 @@
     <div class="d-row" style="grid-column: span 2;"><div class="d-label">ITI Name & Address</div><div class="d-val" id="m_iti">PR03000188-Satluj Institute of Vocational Edu. Village Sandhehasham Backside, PN Bank Firozepur Zira Road FIROZEPUR, PUNJAB 152003</div></div>
   </div>
 
-  <!-- Marks Table -->
   <table class="marks-table">
     <thead>
       <tr>
@@ -282,7 +269,6 @@
 </div>
 
 <script>
-  // Print Date Display
   const today = new Date();
   const dateStr = today.getDate() + '-' + today.toLocaleString('default', { month: 'short' }) + '-' + today.getFullYear().toString().substr(-2);
   document.getElementById('printDate').innerText = dateStr;
@@ -290,16 +276,20 @@
   document.getElementById('studentForm').addEventListener('submit', function(e) {
     e.preventDefault();
 
-    const rollVal = document.getElementById('roll').value.trim();
+    const roll = document.getElementById('roll').value.trim();
+    const name = document.getElementById('name').value.trim();
+    const father = document.getElementById('father').value.trim();
+    const trade = document.getElementById('trade').value.trim();
+    const iti = document.getElementById('iti').value.trim();
+    const dob = document.getElementById('dob').value.trim();
 
-    // Marksheet ke fields update karein
-    document.getElementById('m_reg').innerText = rollVal;
-    document.getElementById('m_roll').innerText = rollVal;
-    document.getElementById('m_name').innerText = document.getElementById('name').value.trim();
-    document.getElementById('m_father').innerText = document.getElementById('father').value.trim();
-    document.getElementById('m_trade').innerText = document.getElementById('trade').value.trim();
-    document.getElementById('m_iti').innerText = document.getElementById('iti').value.trim();
-    document.getElementById('m_dob').innerText = document.getElementById('dob').value.trim();
+    document.getElementById('m_reg').innerText = roll;
+    document.getElementById('m_roll').innerText = roll;
+    document.getElementById('m_name').innerText = name;
+    document.getElementById('m_father').innerText = father;
+    document.getElementById('m_trade').innerText = trade;
+    document.getElementById('m_iti').innerText = iti;
+    document.getElementById('m_dob').innerText = dob;
     document.getElementById('m_examDate').innerText = document.getElementById('examDate').value.trim();
     document.getElementById('m_traineeType').innerText = document.getElementById('traineeType').value.trim();
     document.getElementById('m_session').innerText = document.getElementById('session').value.trim();
@@ -307,10 +297,18 @@
     document.getElementById('m_resultDate').innerText = document.getElementById('resultDate').value.trim();
     document.getElementById('m_status').innerText = document.getElementById('status').value;
 
-    // Direct Short Verification Link
-    let verifyUrl = "https://ncvtmisgo.github.io/ncvt-verification/verify.html?roll=" + encodeURIComponent(rollVal);
+    // Compact Clean Link for Easy QR Scanning
+    let params = new URLSearchParams({
+      r: roll,
+      n: name,
+      f: father,
+      t: trade,
+      i: iti,
+      d: dob
+    });
 
-    // Dynamic Clean QR Code Canvas Generation
+    let verifyUrl = "https://ncvtmisgo.github.io/ncvt-verification/verify.html?" + params.toString();
+
     document.getElementById("qrcode").innerHTML = "";
     new QRCode(document.getElementById("qrcode"), {
       text: verifyUrl,
