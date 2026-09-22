@@ -15,8 +15,6 @@
     .label { font-weight: bold; width: 40%; color: #555; }
     .val { width: 60%; color: #111; font-weight: 600; }
     #qrcode { position: absolute; top: 25px; right: 25px; }
-    .loader { text-align: center; font-size: 18px; color: #0d47a1; font-weight: bold; padding: 20px; }
-    .error { text-align: center; color: #d32f2f; font-size: 18px; font-weight: bold; padding: 20px; }
     
     @media print {
       body { background: white; padding: 0; }
@@ -39,17 +37,26 @@
     <div class="badge">✅ Authenticated & Verified Record</div>
   </div>
 
-  <div id="content" class="loader">Fetching Details from Google Database...</div>
+  <div id="content"></div>
 </div>
 
 <script>
-  const API_URL = "https://script.google.com/macros/s/AKfycbxZ8LV9kzxSSn98-Bc1W9_oYxSWfWsziGeSNPXWz3DqAtLYGI-_75F7B3zc3_-a5lp6QA/exec";
   const urlParams = new URLSearchParams(window.location.search);
-  const roll = urlParams.get('roll') || urlParams.get('id');
 
-  if (!roll) {
-    document.getElementById('content').className = "error";
-    document.getElementById('content').innerHTML = "❌ Roll Number Missing in Request";
+  // Read data directly from URL
+  const roll = urlParams.get('roll') || '';
+  const name = urlParams.get('name') || '';
+  const father = urlParams.get('father') || '';
+  const mother = urlParams.get('mother') || '';
+  const dob = urlParams.get('dob') || '';
+  const trade = urlParams.get('trade') || '';
+  const examDate = urlParams.get('examDate') || '';
+  const iti = urlParams.get('iti') || '';
+  const marks = urlParams.get('marks') || '';
+  const status = urlParams.get('status') || 'Pass';
+
+  if (!roll && !name) {
+    document.getElementById('content').innerHTML = "<h3 style='color:red; text-align:center;'>❌ Invalid Request / Details Missing</h3>";
   } else {
     // Dynamic QR Code Generate
     new QRCode(document.getElementById("qrcode"), {
@@ -58,34 +65,18 @@
       height: 90
     });
 
-    // Fetch permanent data from Google Sheet
-    fetch(`${API_URL}?roll=${encodeURIComponent(roll)}`)
-      .then(res => res.json())
-      .then(res => {
-        if (res.status === 'success') {
-          const s = res.data;
-          document.getElementById('content').className = "";
-          document.getElementById('content').innerHTML = `
-            <div class="row"><div class="label">Roll Number:</div><div class="val">${s.roll}</div></div>
-            <div class="row"><div class="label">Student Name:</div><div class="val">${s.name}</div></div>
-            <div class="row"><div class="label">Father's Name:</div><div class="val">${s.father}</div></div>
-            <div class="row"><div class="label">Mother's Name:</div><div class="val">${s.mother || 'N/A'}</div></div>
-            <div class="row"><div class="label">Date of Birth:</div><div class="val">${s.dob}</div></div>
-            <div class="row"><div class="label">Trade Name:</div><div class="val">${s.trade}</div></div>
-            <div class="row"><div class="label">Exam Date:</div><div class="val">${s.examDate}</div></div>
-            <div class="row"><div class="label">Institute Name:</div><div class="val">${s.iti}</div></div>
-            <div class="row"><div class="label">Marks Secured:</div><div class="val">${s.marks} / 700</div></div>
-            <div class="row"><div class="label">Result Status:</div><div class="val" style="color:green; font-weight:bold;">${s.status}</div></div>
-          `;
-        } else {
-          document.getElementById('content').className = "error";
-          document.getElementById('content').innerHTML = "❌ Invalid Certificate / Record Not Found";
-        }
-      })
-      .catch(err => {
-        document.getElementById('content').className = "error";
-        document.getElementById('content').innerHTML = "❌ Database Connection Error";
-      });
+    document.getElementById('content').innerHTML = `
+      <div class="row"><div class="label">Roll Number:</div><div class="val">${roll}</div></div>
+      <div class="row"><div class="label">Student Name:</div><div class="val">${name}</div></div>
+      <div class="row"><div class="label">Father's Name:</div><div class="val">${father}</div></div>
+      <div class="row"><div class="label">Mother's Name:</div><div class="val">${mother}</div></div>
+      <div class="row"><div class="label">Date of Birth:</div><div class="val">${dob}</div></div>
+      <div class="row"><div class="label">Trade Name:</div><div class="val">${trade}</div></div>
+      <div class="row"><div class="label">Exam Date:</div><div class="val">${examDate}</div></div>
+      <div class="row"><div class="label">Institute Name:</div><div class="val">${iti}</div></div>
+      <div class="row"><div class="label">Marks Secured:</div><div class="val">${marks}</div></div>
+      <div class="row"><div class="label">Result Status:</div><div class="val" style="color:green; font-weight:bold;">${status}</div></div>
+    `;
   }
 </script>
 
