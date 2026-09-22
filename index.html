@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <title>Admin - NCVT Marksheet Generator</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <style>
     body { font-family: Arial, sans-serif; background: #f0f2f5; padding: 20px; margin: 0; }
     
@@ -14,7 +13,7 @@
     input, select { width: 100%; padding: 8px; margin-top: 4px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
     button { width: 100%; padding: 12px; background: #0d47a1; color: white; border: none; font-size: 16px; font-weight: bold; cursor: pointer; border-radius: 4px; margin-top: 15px; }
 
-    /* Printable Marksheet Layout - Exact match to image */
+    /* Printable Marksheet Layout */
     .marksheet-border {
       display: none;
       background: white;
@@ -57,7 +56,8 @@
 
     .disclaimer { font-size: 8px; line-height: 1.2; color: #333; margin-top: 15px; border-top: 1px solid #ddd; padding-top: 5px; }
 
-    #qrcode { position: absolute; top: 35px; right: 40px; border: 1px solid #000; padding: 2px; background: #fff; }
+    /* QR Code Styling for Fast & Clear Scanning */
+    #qrcode { position: absolute; top: 30px; right: 40px; border: 1px solid #000; padding: 5px; background: #ffffff; }
 
     @media print {
       body { background: white; padding: 0; }
@@ -118,9 +118,10 @@
 <div class="marksheet-border" id="marksheetArea">
   <div class="top-bar">
     <span>Registration No.: <span id="m_reg">00150803159242</span></span>
-    <span style="margin-right: 110px;">Roll No.: <span id="m_roll">00150803159242</span></span>
+    <span style="margin-right: 120px;">Roll No.: <span id="m_roll">00150803159242</span></span>
   </div>
 
+  <!-- QR Code Image Box -->
   <div id="qrcode"></div>
 
   <!-- Emblem Image -->
@@ -273,7 +274,7 @@
 </div>
 
 <script>
-  // Set current date
+  // Print Date Display
   const today = new Date();
   const dateStr = today.getDate() + '-' + today.toLocaleString('default', { month: 'short' }) + '-' + today.getFullYear().toString().substr(-2);
   document.getElementById('printDate').innerText = dateStr;
@@ -315,13 +316,9 @@
     const params = new URLSearchParams(data).toString();
     const verifyUrl = `${window.location.origin}${window.location.pathname.replace('index.html', '')}verify.html?${params}`;
 
-    // Generate QR Code
-    document.getElementById("qrcode").innerHTML = "";
-    new QRCode(document.getElementById("qrcode"), {
-      text: verifyUrl,
-      width: 75,
-      height: 75
-    });
+    // 100% Reliable Image-based QR Code Generation
+    const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&margin=0&data=${encodeURIComponent(verifyUrl)}`;
+    document.getElementById("qrcode").innerHTML = `<img src="${qrApiUrl}" alt="QR Code" width="85" height="85" style="display:block;">`;
 
     document.getElementById('marksheetArea').style.display = 'block';
     window.scrollTo({ top: document.getElementById('marksheetArea').offsetTop, behavior: 'smooth' });
