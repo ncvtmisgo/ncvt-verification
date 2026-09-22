@@ -1,50 +1,90 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
   <meta charset="UTF-8">
-  <title>NCVT Online Verification</title>
+  <title>NCVT Online Verification Portal</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <style>
-    body { font-family: Arial, sans-serif; background: #eef2f5; display: flex; justify-content: center; padding: 30px; }
-    .card { background: white; padding: 25px; border-radius: 8px; width: 100%; max-width: 600px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-    .row { display: flex; margin-bottom: 8px; border-bottom: 1px solid #eee; padding-bottom: 4px; }
+    body { font-family: Arial, sans-serif; background: #eef2f5; padding: 20px; margin: 0; }
+    .card { background: white; border: 3px double #0d47a1; max-width: 650px; margin: 30px auto; padding: 30px; border-radius: 8px; position: relative; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    .header { text-align: center; border-bottom: 2px solid #0d47a1; padding-bottom: 15px; margin-bottom: 20px; }
+    .header h3 { margin: 0; color: #555; font-size: 14px; }
+    .header h2 { margin: 5px 0 0 0; color: #0d47a1; font-size: 20px; }
+    .badge { background: #2e7d32; color: white; padding: 4px 8px; font-size: 12px; font-weight: bold; border-radius: 4px; display: inline-block; margin-top: 8px; }
+    .row { display: flex; margin-bottom: 10px; border-bottom: 1px dashed #ddd; padding-bottom: 6px; }
     .label { font-weight: bold; width: 40%; color: #555; }
-    .val { width: 60%; color: #111; }
-    .error { color: red; font-weight: bold; text-align: center; }
+    .val { width: 60%; color: #111; font-weight: 600; }
+    #qrcode { position: absolute; top: 25px; right: 25px; }
+    .loader { text-align: center; font-size: 18px; color: #0d47a1; font-weight: bold; padding: 20px; }
+    .error { text-align: center; color: #d32f2f; font-size: 18px; font-weight: bold; padding: 20px; }
+    
+    @media print {
+      body { background: white; padding: 0; }
+      .card { border: none; box-shadow: none; margin: 0; max-width: 100%; }
+      .no-print { display: none; }
+    }
   </style>
 </head>
 <body>
 
-<div class="card" id="content">Loading Data...</div>
+<div style="text-align: center; margin-top: 15px;" class="no-print">
+  <button onclick="window.print()" style="padding: 8px 20px; background: #0d47a1; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer;">🖨️ Print Certificate / Save PDF</button>
+</div>
+
+<div class="card">
+  <div id="qrcode"></div>
+  <div class="header">
+    <h3>GOVERNMENT OF INDIA</h3>
+    <h2>NATIONAL TRADE CERTIFICATE & MARKSHEET</h2>
+    <div class="badge">✅ Authenticated & Verified Record</div>
+  </div>
+
+  <div id="content" class="loader">Fetching Details from Google Database...</div>
+</div>
 
 <script>
+  const API_URL = "https://script.google.com/macros/s/AKfycbxZ8LV9kzxSSn98-Bc1W9_oYxSWfWsziGeSNPXWz3DqAtLYGI-_75F7B3zc3_-a5lp6QA/exec";
   const urlParams = new URLSearchParams(window.location.search);
-  const rollNo = urlParams.get('roll') || urlParams.get('id');
+  const roll = urlParams.get('roll') || urlParams.get('id');
 
-  if (!rollNo) {
-    document.getElementById('content').innerHTML = "<div class='error'>❌ Roll Number Missing</div>";
+  if (!roll) {
+    document.getElementById('content').className = "error";
+    document.getElementById('content').innerHTML = "❌ Roll Number Missing in Request";
   } else {
-    // Save kiye huye JSON file se data fetch karna
-    fetch('students.json')
-      .then(response => response.json())
-      .then(data => {
-        if (data[rollNo]) {
-          const s = data[rollNo];
+    // Dynamic QR Code Generate
+    new QRCode(document.getElementById("qrcode"), {
+      text: window.location.href,
+      width: 90,
+      height: 90
+    });
+
+    // Fetch permanent data from Google Sheet
+    fetch(`${API_URL}?roll=${encodeURIComponent(roll)}`)
+      .then(res => res.json())
+      .then(res => {
+        if (res.status === 'success') {
+          const s = res.data;
+          document.getElementById('content').className = "";
           document.getElementById('content').innerHTML = `
-            <h2 style="color:green; text-align:center;">✅ Verified Certificate</h2>
-            <div class="row"><div class="label">Roll Number:</div><div class="val">${rollNo}</div></div>
+            <div class="row"><div class="label">Roll Number:</div><div class="val">${s.roll}</div></div>
             <div class="row"><div class="label">Student Name:</div><div class="val">${s.name}</div></div>
-            <div class="row"><div class="label">Father Name:</div><div class="val">${s.father}</div></div>
-            <div class="row"><div class="label">Trade:</div><div class="val">${s.trade}</div></div>
+            <div class="row"><div class="label">Father's Name:</div><div class="val">${s.father}</div></div>
+            <div class="row"><div class="label">Mother's Name:</div><div class="val">${s.mother || 'N/A'}</div></div>
+            <div class="row"><div class="label">Date of Birth:</div><div class="val">${s.dob}</div></div>
+            <div class="row"><div class="label">Trade Name:</div><div class="val">${s.trade}</div></div>
             <div class="row"><div class="label">Exam Date:</div><div class="val">${s.examDate}</div></div>
-            <div class="row"><div class="label">Marks:</div><div class="val">${s.marks}</div></div>
-            <div class="row"><div class="label">Status:</div><div class="val" style="color:green; font-weight:bold;">${s.status}</div></div>
+            <div class="row"><div class="label">Institute Name:</div><div class="val">${s.iti}</div></div>
+            <div class="row"><div class="label">Marks Secured:</div><div class="val">${s.marks} / 700</div></div>
+            <div class="row"><div class="label">Result Status:</div><div class="val" style="color:green; font-weight:bold;">${s.status}</div></div>
           `;
         } else {
-          document.getElementById('content').innerHTML = "<div class='error'>❌ Invalid Roll Number / Certificate Not Found</div>";
+          document.getElementById('content').className = "error";
+          document.getElementById('content').innerHTML = "❌ Invalid Certificate / Record Not Found";
         }
       })
       .catch(err => {
-        document.getElementById('content').innerHTML = "<div class='error'>❌ Error loading database</div>";
+        document.getElementById('content').className = "error";
+        document.getElementById('content').innerHTML = "❌ Database Connection Error";
       });
   }
 </script>
