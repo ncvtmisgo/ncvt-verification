@@ -2,125 +2,63 @@
 <html lang="hi">
 <head>
   <meta charset="UTF-8">
-  <title>NATIONAL TRADE CERTIFICATE & MARKSHEET</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <title>NCVT Student Verification Result</title>
   <style>
-    body { font-family: 'Times New Roman', Times, serif; background: #eef2f5; padding: 20px; margin: 0; }
+    body { font-family: Arial, sans-serif; background: #eef2f5; padding: 20px; margin: 0; }
+    .card { background: white; border: 2px solid #0d47a1; max-width: 500px; margin: 20px auto; padding: 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    .header { text-align: center; border-bottom: 2px solid #e0e0e0; padding-bottom: 12px; margin-bottom: 15px; }
+    .header h2 { margin: 0; color: #0d47a1; font-size: 18px; text-transform: uppercase; }
+    .badge { background: #2e7d32; color: white; padding: 4px 10px; font-size: 12px; font-weight: bold; border-radius: 20px; display: inline-block; margin-top: 6px; }
     
-    /* Certificate Box Design */
-    .cert-border {
-      background: white;
-      border: 8px double #0d47a1;
-      max-width: 780px;
-      margin: 10px auto;
-      padding: 30px;
-      position: relative;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-    }
-    
-    .cert-header { text-align: center; border-bottom: 2px solid #0d47a1; padding-bottom: 15px; margin-bottom: 25px; }
-    .cert-header img { height: 65px; margin-bottom: 5px; }
-    .cert-header h4 { margin: 0; font-size: 14px; letter-spacing: 1px; color: #444; }
-    .cert-header h2 { margin: 5px 0; font-size: 22px; color: #0d47a1; text-transform: uppercase; }
-    .cert-header h3 { margin: 0; font-size: 16px; color: #2e7d32; font-family: Arial, sans-serif; }
-
-    /* Student Details Table Layout */
-    .details-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 15px; }
-    .details-table td { padding: 8px 10px; border-bottom: 1px solid #e0e0e0; }
-    .label-col { font-weight: bold; color: #333; width: 35%; text-transform: uppercase; font-size: 13px; font-family: Arial, sans-serif; }
-    .val-col { color: #000; font-weight: 600; width: 65%; font-size: 15px; }
-
-    /* Footer & Stamp Section */
-    .cert-footer { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 40px; padding-top: 20px; }
-    .signature { text-align: center; }
-    .signature-line { border-top: 1px solid #000; width: 180px; margin-top: 40px; font-size: 13px; font-weight: bold; font-family: Arial, sans-serif; }
-
-    #qrcode { position: absolute; top: 25px; right: 25px; border: 2px solid #0d47a1; padding: 4px; background: #fff; }
-    
-    /* Hide button while printing */
-    @media print {
-      body { background: white; padding: 0; }
-      .cert-border { border: 6px double #0d47a1; box-shadow: none; margin: 0; max-width: 100%; }
-      .no-print { display: none; }
-    }
+    .row { display: flex; margin-bottom: 8px; border-bottom: 1px dashed #eee; padding-bottom: 6px; font-size: 14px; }
+    .label { font-weight: bold; width: 40%; color: #555; }
+    .val { width: 60%; color: #111; font-weight: 600; }
+    .footer { text-align: center; margin-top: 15px; font-size: 11px; color: #777; }
   </style>
 </head>
 <body>
 
-<div style="text-align: center; margin-bottom: 15px;" class="no-print">
-  <button onclick="window.print()" style="padding: 10px 25px; background: #0d47a1; color: white; border: none; border-radius: 4px; font-size: 16px; font-weight: bold; cursor: pointer;">🖨️ Print / Save Certificate PDF</button>
-</div>
-
-<div class="cert-border">
-  <!-- QR Code Top Right -->
-  <div id="qrcode"></div>
-
-  <!-- Header -->
-  <div class="cert-header">
-    <h4>GOVERNMENT OF INDIA / भारत सरकार</h4>
-    <h4>MINISTRY OF SKILL DEVELOPMENT & ENTREPRENEURSHIP</h4>
-    <h2>NATIONAL TRADE CERTIFICATE</h2>
-    <h3>( National Council for Vocational Training )</h3>
+<div class="card">
+  <div class="header">
+    <h2>NCVT Trainee Verification</h2>
+    <div class="badge">✅ Verified Original Record</div>
   </div>
 
-  <!-- Content -->
   <div id="content"></div>
 
-  <!-- Footer -->
-  <div class="cert-footer">
-    <div style="font-size: 12px; font-family: Arial, sans-serif;">
-      <p style="margin: 0;"><b>Verification URL:</b> <span id="certUrl"></span></p>
-      <p style="margin: 5px 0 0 0; color: #2e7d32; font-weight: bold;">Status: Authenticated & Digitally Verified</p>
-    </div>
-    <div class="signature">
-      <div class="signature-line">Controller of Examinations<br>NCVT, New Delhi</div>
-    </div>
+  <div class="footer">
+    National Council for Vocational Training (NCVT) Online Verification Portal
   </div>
 </div>
 
 <script>
   const urlParams = new URLSearchParams(window.location.search);
 
-  const roll = urlParams.get('roll') || '';
-  const name = urlParams.get('name') || '';
-  const father = urlParams.get('father') || '';
-  const mother = urlParams.get('mother') || '';
-  const dob = urlParams.get('dob') || '';
-  const trade = urlParams.get('trade') || '';
-  const examDate = urlParams.get('examDate') || '';
-  const iti = urlParams.get('iti') || '';
-  const marks = urlParams.get('marks') || '';
+  const roll = urlParams.get('roll');
+  const name = urlParams.get('name');
+  const father = urlParams.get('father');
+  const mother = urlParams.get('mother');
+  const dob = urlParams.get('dob');
+  const trade = urlParams.get('trade');
+  const examDate = urlParams.get('examDate');
+  const iti = urlParams.get('iti');
+  const marks = urlParams.get('marks');
   const status = urlParams.get('status') || 'Pass';
 
-  document.getElementById('certUrl').innerText = window.location.hostname;
-
-  if (!roll && !name) {
-    document.getElementById('content').innerHTML = "<h3 style='color:red; text-align:center;'>❌ Invalid Certificate Details</h3>";
+  if (!roll || !name) {
+    document.getElementById('content').innerHTML = "<p style='color:red; text-align:center; font-weight:bold;'>❌ Certificate Not Found / Invalid QR Code</p>";
   } else {
-    // Dynamic QR Code Generate
-    new QRCode(document.getElementById("qrcode"), {
-      text: window.location.href,
-      width: 95,
-      height: 95
-    });
-
     document.getElementById('content').innerHTML = `
-      <p style="text-align: center; font-style: italic; margin-bottom: 20px;">
-        This is to certify that the person named below has successfully completed the prescribed course of training and passed the All India Trade Test.
-      </p>
-
-      <table class="details-table">
-        <tr><td class="label-col">Roll / Registration No:</td><td class="val-col">${roll}</td></tr>
-        <tr><td class="label-col">Trainee Name:</td><td class="val-col">${name}</td></tr>
-        <tr><td class="label-col">Father's Name:</td><td class="val-col">${father}</td></tr>
-        <tr><td class="label-col">Mother's Name:</td><td class="val-col">${mother || 'N/A'}</td></tr>
-        <tr><td class="label-col">Date of Birth:</td><td class="val-col">${dob}</td></tr>
-        <tr><td class="label-col">Trade Name:</td><td class="val-col">${trade}</td></tr>
-        <tr><td class="label-col">Exam Month / Year:</td><td class="val-col">${examDate}</td></tr>
-        <tr><td class="label-col">Name of Institute (ITI):</td><td class="val-col">${iti}</td></tr>
-        <tr><td class="label-col">Marks Secured:</td><td class="val-col">${marks}</td></tr>
-        <tr><td class="label-col">Result Status:</td><td class="val-col" style="color: #2e7d32; font-weight: bold;">${status.toUpperCase()}</td></tr>
-      </table>
+      <div class="row"><div class="label">Roll Number:</div><div class="val">${roll}</div></div>
+      <div class="row"><div class="label">Student Name:</div><div class="val">${name}</div></div>
+      <div class="row"><div class="label">Father's Name:</div><div class="val">${father}</div></div>
+      <div class="row"><div class="label">Mother's Name:</div><div class="val">${mother || 'N/A'}</div></div>
+      <div class="row"><div class="label">Date of Birth:</div><div class="val">${dob}</div></div>
+      <div class="row"><div class="label">Trade:</div><div class="val">${trade}</div></div>
+      <div class="row"><div class="label">Exam Month-Year:</div><div class="val">${examDate}</div></div>
+      <div class="row"><div class="label">ITI Institute:</div><div class="val">${iti}</div></div>
+      <div class="row"><div class="label">Marks Secured:</div><div class="val">${marks}</div></div>
+      <div class="row"><div class="label">Status:</div><div class="val" style="color: green; font-weight: bold;">${status.toUpperCase()}</div></div>
     `;
   }
 </script>
