@@ -2,78 +2,107 @@
 <html lang="hi">
 <head>
   <meta charset="UTF-8">
-  <title>Admin - Certificate Generator</title>
+  <title>Admin - NCVT Marksheet Generator</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <style>
-    body { font-family: Arial, sans-serif; background: #f0f2f5; padding: 20px; }
+    body { font-family: Arial, sans-serif; background: #f0f2f5; padding: 20px; margin: 0; }
+    
+    /* Form Section */
     .form-box { background: white; max-width: 500px; margin: 0 auto 30px auto; padding: 25px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
     h2 { text-align: center; color: #0d47a1; margin-top: 0; }
     label { font-weight: bold; display: block; margin-top: 10px; font-size: 13px; }
     input, select { width: 100%; padding: 8px; margin-top: 4px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
     button { width: 100%; padding: 12px; background: #0d47a1; color: white; border: none; font-size: 16px; font-weight: bold; cursor: pointer; border-radius: 4px; margin-top: 15px; }
 
-    /* Printable Certificate Layout */
-    .cert-border {
+    /* Printable Marksheet Layout - Exact match to image */
+    .marksheet-border {
       display: none;
       background: white;
-      border: 6px double #0d47a1;
-      max-width: 750px;
-      margin: 20px auto;
-      padding: 30px;
+      border: 1px solid #ccc;
+      width: 800px;
+      margin: 10px auto;
+      padding: 40px;
       position: relative;
       box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-      font-family: 'Times New Roman', Times, serif;
+      font-family: Arial, Helvetica, sans-serif;
+      box-sizing: border-box;
+      color: #000;
     }
-    .cert-header { text-align: center; border-bottom: 2px solid #0d47a1; padding-bottom: 10px; margin-bottom: 20px; }
-    .cert-header h4 { margin: 0; font-size: 13px; color: #444; }
-    .cert-header h2 { margin: 5px 0; font-size: 22px; color: #0d47a1; }
-    .cert-header h3 { margin: 0; font-size: 15px; color: #2e7d32; font-family: Arial, sans-serif; }
-    .details-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 15px; }
-    .details-table td { padding: 8px 10px; border-bottom: 1px solid #e0e0e0; }
-    .label-col { font-weight: bold; color: #333; width: 35%; font-family: Arial, sans-serif; font-size: 13px; }
-    .val-col { color: #000; font-weight: 600; width: 65%; }
-    .cert-footer { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 40px; }
-    .signature-line { border-top: 1px solid #000; width: 180px; text-align: center; font-size: 12px; font-weight: bold; font-family: Arial, sans-serif; }
-    #qrcode { position: absolute; top: 25px; right: 25px; border: 1px solid #0d47a1; padding: 3px; background: #fff; }
+
+    .top-bar { display: flex; justify-content: space-between; font-size: 11px; font-weight: bold; margin-bottom: 10px; }
+    
+    .emblem-container { text-align: center; margin-bottom: 5px; }
+    .emblem-container img { width: 45px; height: auto; }
+
+    .header-title { text-align: center; font-size: 12px; font-weight: bold; text-transform: uppercase; margin-bottom: 3px; }
+    .sub-title { text-align: center; font-size: 11px; font-weight: bold; margin-bottom: 15px; }
+
+    /* Details Grid */
+    .details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 20px; font-size: 11px; margin-bottom: 15px; line-height: 1.4; }
+    .d-row { display: flex; }
+    .d-label { width: 140px; font-weight: bold; text-align: right; padding-right: 8px; }
+    .d-val { flex: 1; border-bottom: 1px dotted #000; font-weight: bold; }
+
+    /* Marks Table */
+    .marks-table { width: 100%; border-collapse: collapse; font-size: 10px; text-align: center; margin-bottom: 15px; }
+    .marks-table th, .marks-table td { border: 1px solid #777; padding: 4px 2px; }
+    .marks-table th { background: #f9f9f9; font-weight: bold; }
+    .text-left { text-align: left; padding-left: 5px !important; }
+
+    /* Footer Section */
+    .footer-dates { font-size: 10px; font-weight: bold; margin-bottom: 30px; }
+    .signature-area { display: flex; justify-content: space-between; align-items: flex-end; font-size: 10px; margin-top: 20px; }
+    .sig-box { text-align: right; }
+    .sig-line { font-weight: bold; margin-top: 5px; }
+
+    .disclaimer { font-size: 8px; line-height: 1.2; color: #333; margin-top: 15px; border-top: 1px solid #ddd; padding-top: 5px; }
+
+    #qrcode { position: absolute; top: 35px; right: 40px; border: 1px solid #000; padding: 2px; background: #fff; }
 
     @media print {
       body { background: white; padding: 0; }
       .form-box, .no-print { display: none !important; }
-      .cert-border { display: block !important; border: 5px double #0d47a1; box-shadow: none; margin: 0; max-width: 100%; }
+      .marksheet-border { display: block !important; border: none; box-shadow: none; margin: 0; width: 100%; padding: 20px; }
     }
   </style>
 </head>
 <body>
 
 <div class="form-box no-print">
-  <h2>Generate Student Certificate</h2>
+  <h2>NCVT Marksheet Generator</h2>
   <form id="studentForm">
-    <label>Roll Number (Unique ID):</label>
-    <input type="text" id="roll" placeholder="e.g. 261250100569" required>
+    <label>Roll Number (Registration No):</label>
+    <input type="text" id="roll" value="00150803159242" required>
 
     <label>Student Name:</label>
-    <input type="text" id="name" placeholder="Student Name" required>
+    <input type="text" id="name" value="SUNIL KUMAR" required>
 
-    <label>Father's Name:</label>
-    <input type="text" id="father" placeholder="Father Name" required>
-
-    <label>Mother's Name:</label>
-    <input type="text" id="mother" placeholder="Mother Name" required>
-
-    <label>Date of Birth:</label>
-    <input type="text" id="dob" placeholder="e.g. 29-DEC-1995" required>
+    <label>Father/Guardian Name:</label>
+    <input type="text" id="father" value="PREM KUMAR" required>
 
     <label>Trade Name:</label>
-    <input type="text" id="trade" placeholder="e.g. ELECTRICIAN" required>
-
-    <label>Exam Month-Year:</label>
-    <input type="text" id="examDate" placeholder="e.g. Jul-2025" required>
+    <input type="text" id="trade" value="Plumber" required>
 
     <label>ITI Name & Address:</label>
-    <input type="text" id="iti" placeholder="e.g. Govt ITI Pathankot" required>
+    <input type="text" id="iti" value="PR03000188-Satluj Institute of Vocational Edu. Village Sandhehasham Backside, PN Bank Firozepur Zira Road FIROZEPUR, PUNJAB 152003" required>
 
-    <label>Total Marks Secured:</label>
-    <input type="text" id="marks" placeholder="e.g. 580 / 700" required>
+    <label>Date of Birth:</label>
+    <input type="text" id="dob" value="19-Jul-87" required>
+
+    <label>Exam Month-Year:</label>
+    <input type="text" id="examDate" value="Jul 2016" required>
+
+    <label>Trainee Type:</label>
+    <input type="text" id="traineeType" value="REGULAR" required>
+
+    <label>Academic Session:</label>
+    <input type="text" id="session" value="Aug 2015" required>
+
+    <label>Semester / Trade System:</label>
+    <input type="text" id="semester" value="Semester - 2 (CTS Semester System) Engineering Trades" required>
+
+    <label>Result Date:</label>
+    <input type="text" id="resultDate" value="30-Dec-16" required>
 
     <label>Result Status:</label>
     <select id="status">
@@ -81,41 +110,174 @@
       <option value="Fail">Fail</option>
     </select>
 
-    <button type="submit">Generate Print Certificate & QR</button>
+    <button type="submit">Generate Marksheet & QR Code</button>
   </form>
 </div>
 
-<!-- Certificate to Print -->
-<div class="cert-border" id="certArea">
+<!-- Print Marksheet Layout -->
+<div class="marksheet-border" id="marksheetArea">
+  <div class="top-bar">
+    <span>Registration No.: <span id="m_reg">00150803159242</span></span>
+    <span style="margin-right: 110px;">Roll No.: <span id="m_roll">00150803159242</span></span>
+  </div>
+
   <div id="qrcode"></div>
-  <div class="cert-header">
-    <h4>GOVERNMENT OF INDIA / भारत सरकार</h4>
-    <h4>MINISTRY OF SKILL DEVELOPMENT & ENTREPRENEURSHIP</h4>
-    <h2>NATIONAL TRADE CERTIFICATE</h2>
-    <h3>( National Council for Vocational Training )</h3>
+
+  <!-- Emblem Image -->
+  <div class="emblem-container">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="Emblem of India">
   </div>
 
-  <p style="text-align: center; font-style: italic; margin-bottom: 15px;">
-    This is to certify that the person named below has successfully completed the prescribed course of training and passed the All India Trade Test.
-  </p>
+  <div class="header-title">STATEMENT OF MARKS FOR AITT CONDUCTED UNDER THE AEGIES OF NCVT</div>
+  <div class="sub-title">Academic Session - <span id="m_session">Aug 2015</span><br><span id="m_semester">Semester - 2 (CTS Semester System) Engineering Trades</span></div>
 
-  <div id="certContent"></div>
+  <div class="details-grid">
+    <div class="d-row"><div class="d-label">Name</div><div class="d-val" id="m_name">SUNIL KUMAR</div></div>
+    <div class="d-row"><div class="d-label">Date of Birth</div><div class="d-val" id="m_dob">19-Jul-87</div></div>
+    
+    <div class="d-row"><div class="d-label">Father/Guardian Name</div><div class="d-val" id="m_father">PREM KUMAR</div></div>
+    <div class="d-row"><div class="d-label">Exam Month-Year</div><div class="d-val" id="m_examDate">Jul 2016</div></div>
+    
+    <div class="d-row"><div class="d-label">Trade Name</div><div class="d-val" id="m_trade">Plumber</div></div>
+    <div class="d-row"><div class="d-label">Trainee Type</div><div class="d-val" id="m_traineeType">REGULAR</div></div>
+    
+    <div class="d-row" style="grid-column: span 2;"><div class="d-label">ITI Name & Address</div><div class="d-val" id="m_iti">PR03000188-Satluj Institute of Vocational Edu. Village Sandhehasham Backside, PN Bank Firozepur Zira Road FIROZEPUR, PUNJAB 152003</div></div>
+  </div>
 
-  <div class="cert-footer">
-    <div style="font-size: 11px; font-family: Arial, sans-serif;">
-      <p style="margin: 0; color: #2e7d32; font-weight: bold;">Status: Authenticated & Digitally Verified</p>
+  <!-- Marks Table -->
+  <table class="marks-table">
+    <thead>
+      <tr>
+        <th style="width: 5%;">S. No.</th>
+        <th style="width: 15%;">Paper</th>
+        <th style="width: 10%;">Paper Max. Marks</th>
+        <th style="width: 10%;">Paper Min. Marks</th>
+        <th style="width: 10%;">Total Marks Secured</th>
+        <th style="width: 25%;">Subject</th>
+        <th style="width: 10%;">Subject Max. Marks</th>
+        <th style="width: 10%;">Subject Min. Marks</th>
+        <th style="width: 10%;">Marks Secured</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td rowspan="2">1</td>
+        <td rowspan="2">Paper-I</td>
+        <td rowspan="2">170</td>
+        <td rowspan="2">68 (40%)</td>
+        <td rowspan="2">80</td>
+        <td class="text-left">Trade Theory</td>
+        <td>150</td>
+        <td>37.5 (25)%</td>
+        <td>62</td>
+      </tr>
+      <tr>
+        <td class="text-left">Sessional</td>
+        <td>20</td>
+        <td>-</td>
+        <td>18</td>
+      </tr>
+      <tr>
+        <td rowspan="3">2</td>
+        <td rowspan="3">Paper-II</td>
+        <td rowspan="3">135</td>
+        <td rowspan="3">54 (40%)</td>
+        <td rowspan="3">97</td>
+        <td class="text-left">Part-A Workshop Cal. & Sci.</td>
+        <td>75</td>
+        <td>18.75 (25)%</td>
+        <td>60</td>
+      </tr>
+      <tr>
+        <td class="text-left">Sessional</td>
+        <td>10</td>
+        <td>-</td>
+        <td>9</td>
+      </tr>
+      <tr>
+        <td class="text-left">Part-B Employability Skills</td>
+        <td>50</td>
+        <td>12.5 (25)%</td>
+        <td>28</td>
+      </tr>
+      <tr>
+        <td rowspan="2">3</td>
+        <td rowspan="2">Paper-III</td>
+        <td rowspan="2">95</td>
+        <td rowspan="2">38 (40%)</td>
+        <td rowspan="2">68</td>
+        <td class="text-left">Engg. Drawing</td>
+        <td>75</td>
+        <td>18.75 (25)%</td>
+        <td>49</td>
+      </tr>
+      <tr>
+        <td class="text-left">Sessional</td>
+        <td>20</td>
+        <td>-</td>
+        <td>19</td>
+      </tr>
+      <tr>
+        <td rowspan="2">4</td>
+        <td rowspan="2">Practical</td>
+        <td rowspan="2">300</td>
+        <td rowspan="2">180 (60%)</td>
+        <td rowspan="2">291</td>
+        <td class="text-left">Trade Practical</td>
+        <td>270</td>
+        <td>-</td>
+        <td>262</td>
+      </tr>
+      <tr>
+        <td class="text-left">Sessional</td>
+        <td>30</td>
+        <td>-</td>
+        <td>29</td>
+      </tr>
+      <tr style="font-weight: bold; background: #fafafa;">
+        <td colspan="2">Total</td>
+        <td>700</td>
+        <td>-</td>
+        <td>536</td>
+        <td class="text-left">Total</td>
+        <td>700</td>
+        <td>-</td>
+        <td>536</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="footer-dates">
+    <span>RESULT DATE: <span id="m_resultDate">30-Dec-16</span></span>
+    <span style="margin-left: 50px;">RESULT: <span id="m_status">Pass</span></span>
+  </div>
+
+  <div class="signature-area">
+    <div>
+      <div>Print Date: <span id="printDate"></span></div>
     </div>
-    <div class="signature">
-      <div class="signature-line">Controller of Examinations<br>NCVT, New Delhi</div>
+    <div class="sig-box">
+      <div style="font-family: 'Brush Script MT', cursive; font-size: 18px; color: #1a237e; font-weight: bold;">Member Secretary</div>
+      <div class="sig-line">Member Secretary NCVT</div>
     </div>
   </div>
 
-  <div style="text-align: center; margin-top: 25px;" class="no-print">
-    <button onclick="window.print()" style="padding: 10px 20px; background: #28a745; color: white; border: none; font-size: 16px; font-weight: bold; cursor: pointer; border-radius: 4px;">🖨️ Print Certificate For Student</button>
+  <div class="disclaimer">
+    This is a computer generated Mark Sheet and it does not require any physical signature or attestation. All contents of this Mark Sheet can be verified for authenticity by the process of online verification through scanning the QR code printed above. The verification can also be done by visiting NCVT MIS portal (http://ncvtmis.gov.in/Pages/MarkSheet/Validate.aspx) and entering the roll number.<br>
+    The NCVT shall not be responsible for any direct or indirect financial losses, any loss of goodwill or reputation, or any other loss or damage caused by any incorrect / fraudulent information to this computer generated certificate that cannot be validated by the NCVT MIS portal. NCVT also reserves the right to take appropriate legal action in such cases.
+  </div>
+
+  <div style="text-align: center; margin-top: 20px;" class="no-print">
+    <button onclick="window.print()" style="padding: 10px 25px; background: #28a745; color: white; border: none; font-size: 15px; font-weight: bold; cursor: pointer; border-radius: 4px;">🖨️ Print Marksheet / Save PDF</button>
   </div>
 </div>
 
 <script>
+  // Set current date
+  const today = new Date();
+  const dateStr = today.getDate() + '-' + today.toLocaleString('default', { month: 'short' }) + '-' + today.getFullYear().toString().substr(-2);
+  document.getElementById('printDate').innerText = dateStr;
+
   document.getElementById('studentForm').addEventListener('submit', function(e) {
     e.preventDefault();
 
@@ -123,47 +285,46 @@
       roll: document.getElementById('roll').value.trim(),
       name: document.getElementById('name').value.trim(),
       father: document.getElementById('father').value.trim(),
-      mother: document.getElementById('mother').value.trim(),
-      dob: document.getElementById('dob').value.trim(),
       trade: document.getElementById('trade').value.trim(),
-      examDate: document.getElementById('examDate').value.trim(),
       iti: document.getElementById('iti').value.trim(),
-      marks: document.getElementById('marks').value.trim(),
+      dob: document.getElementById('dob').value.trim(),
+      examDate: document.getElementById('examDate').value.trim(),
+      traineeType: document.getElementById('traineeType').value.trim(),
+      session: document.getElementById('session').value.trim(),
+      semester: document.getElementById('semester').value.trim(),
+      resultDate: document.getElementById('resultDate').value.trim(),
       status: document.getElementById('status').value
     };
 
-    // Verification URL that will open on QR Scan
+    // Update Marksheet HTML Fields
+    document.getElementById('m_reg').innerText = data.roll;
+    document.getElementById('m_roll').innerText = data.roll;
+    document.getElementById('m_name').innerText = data.name;
+    document.getElementById('m_father').innerText = data.father;
+    document.getElementById('m_trade').innerText = data.trade;
+    document.getElementById('m_iti').innerText = data.iti;
+    document.getElementById('m_dob').innerText = data.dob;
+    document.getElementById('m_examDate').innerText = data.examDate;
+    document.getElementById('m_traineeType').innerText = data.traineeType;
+    document.getElementById('m_session').innerText = data.session;
+    document.getElementById('m_semester').innerText = data.semester;
+    document.getElementById('m_resultDate').innerText = data.resultDate;
+    document.getElementById('m_status').innerText = data.status;
+
+    // Generate Dynamic Verification Link
     const params = new URLSearchParams(data).toString();
     const verifyUrl = `${window.location.origin}${window.location.pathname.replace('index.html', '')}verify.html?${params}`;
 
-    // Clear previous QR
+    // Generate QR Code
     document.getElementById("qrcode").innerHTML = "";
-
-    // Generate QR Code containing only Verification URL
     new QRCode(document.getElementById("qrcode"), {
       text: verifyUrl,
-      width: 90,
-      height: 90
+      width: 75,
+      height: 75
     });
 
-    // Populate Certificate Table
-    document.getElementById('certContent').innerHTML = `
-      <table class="details-table">
-        <tr><td class="label-col">Roll / Registration No:</td><td class="val-col">${data.roll}</td></tr>
-        <tr><td class="label-col">Trainee Name:</td><td class="val-col">${data.name}</td></tr>
-        <tr><td class="label-col">Father's Name:</td><td class="val-col">${data.father}</td></tr>
-        <tr><td class="label-col">Mother's Name:</td><td class="val-col">${data.mother || 'N/A'}</td></tr>
-        <tr><td class="label-col">Date of Birth:</td><td class="val-col">${data.dob}</td></tr>
-        <tr><td class="label-col">Trade Name:</td><td class="val-col">${data.trade}</td></tr>
-        <tr><td class="label-col">Exam Month / Year:</td><td class="val-col">${data.examDate}</td></tr>
-        <tr><td class="label-col">Name of Institute (ITI):</td><td class="val-col">${data.iti}</td></tr>
-        <tr><td class="label-col">Marks Secured:</td><td class="val-col">${data.marks}</td></tr>
-        <tr><td class="label-col">Result Status:</td><td class="val-col" style="color: #2e7d32; font-weight: bold;">${data.status.toUpperCase()}</td></tr>
-      </table>
-    `;
-
-    document.getElementById('certArea').style.display = 'block';
-    window.scrollTo({ top: document.getElementById('certArea').offsetTop, behavior: 'smooth' });
+    document.getElementById('marksheetArea').style.display = 'block';
+    window.scrollTo({ top: document.getElementById('marksheetArea').offsetTop, behavior: 'smooth' });
   });
 </script>
 
