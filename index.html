@@ -56,13 +56,13 @@
 
     .disclaimer { font-size: 8px; line-height: 1.2; color: #333; margin-top: 15px; border-top: 1px solid #ddd; padding-top: 5px; }
 
-    /* Clear Box for QR Code Scanning */
+    /* Optimized QR Code Container for Easy Camera Detection */
     #qrcode { 
       position: absolute; 
       top: 30px; 
       right: 40px; 
-      border: 1px solid #333; 
-      padding: 6px; 
+      border: 1px solid #000; 
+      padding: 5px; 
       background: #ffffff; 
     }
 
@@ -79,7 +79,7 @@
   <h2>NCVT Marksheet Generator</h2>
   <form id="studentForm">
     <label>Roll Number (Registration No):</label>
-    <input type="text" id="roll" value="00150803159242" required>
+    <input type="text" id="roll" value="261250152369" required>
 
     <label>Student Name:</label>
     <input type="text" id="name" value="SUNIL KUMAR" required>
@@ -94,22 +94,22 @@
     <input type="text" id="iti" value="PR03000188-Satluj Institute of Vocational Edu. Village Sandhehasham Backside, PN Bank Firozepur Zira Road FIROZEPUR, PUNJAB 152003" required>
 
     <label>Date of Birth:</label>
-    <input type="text" id="dob" value="19-Jul-87" required>
+    <input type="text" id="dob" value="19-Jul-95" required>
 
     <label>Exam Month-Year:</label>
-    <input type="text" id="examDate" value="Jul 2016" required>
+    <input type="text" id="examDate" value="Jul 2025" required>
 
     <label>Trainee Type:</label>
     <input type="text" id="traineeType" value="REGULAR" required>
 
     <label>Academic Session:</label>
-    <input type="text" id="session" value="Aug 2015" required>
+    <input type="text" id="session" value="Aug 2024" required>
 
     <label>Semester / Trade System:</label>
     <input type="text" id="semester" value="Semester - 2 (CTS Semester System) Engineering Trades" required>
 
     <label>Result Date:</label>
-    <input type="text" id="resultDate" value="30-Dec-16" required>
+    <input type="text" id="resultDate" value="30-Dec-25" required>
 
     <label>Result Status:</label>
     <select id="status">
@@ -124,11 +124,11 @@
 <!-- Print Marksheet Layout -->
 <div class="marksheet-border" id="marksheetArea">
   <div class="top-bar">
-    <span>Registration No.: <span id="m_reg">00150803159242</span></span>
-    <span style="margin-right: 130px;">Roll No.: <span id="m_roll">00150803159242</span></span>
+    <span>Registration No.: <span id="m_reg">261250152369</span></span>
+    <span style="margin-right: 130px;">Roll No.: <span id="m_roll">261250152369</span></span>
   </div>
 
-  <!-- QR Code Container -->
+  <!-- QR Code Display Box -->
   <div id="qrcode"></div>
 
   <!-- Emblem Image -->
@@ -137,14 +137,14 @@
   </div>
 
   <div class="header-title">STATEMENT OF MARKS FOR AITT CONDUCTED UNDER THE AEGIES OF NCVT</div>
-  <div class="sub-title">Academic Session - <span id="m_session">Aug 2015</span><br><span id="m_semester">Semester - 2 (CTS Semester System) Engineering Trades</span></div>
+  <div class="sub-title">Academic Session - <span id="m_session">Aug 2024</span><br><span id="m_semester">Semester - 2 (CTS Semester System) Engineering Trades</span></div>
 
   <div class="details-grid">
     <div class="d-row"><div class="d-label">Name</div><div class="d-val" id="m_name">SUNIL KUMAR</div></div>
-    <div class="d-row"><div class="d-label">Date of Birth</div><div class="d-val" id="m_dob">19-Jul-87</div></div>
+    <div class="d-row"><div class="d-label">Date of Birth</div><div class="d-val" id="m_dob">19-Jul-95</div></div>
     
     <div class="d-row"><div class="d-label">Father/Guardian Name</div><div class="d-val" id="m_father">PREM KUMAR</div></div>
-    <div class="d-row"><div class="d-label">Exam Month-Year</div><div class="d-val" id="m_examDate">Jul 2016</div></div>
+    <div class="d-row"><div class="d-label">Exam Month-Year</div><div class="d-val" id="m_examDate">Jul 2025</div></div>
     
     <div class="d-row"><div class="d-label">Trade Name</div><div class="d-val" id="m_trade">Plumber</div></div>
     <div class="d-row"><div class="d-label">Trainee Type</div><div class="d-val" id="m_traineeType">REGULAR</div></div>
@@ -256,7 +256,7 @@
   </table>
 
   <div class="footer-dates">
-    <span>RESULT DATE: <span id="m_resultDate">30-Dec-16</span></span>
+    <span>RESULT DATE: <span id="m_resultDate">30-Dec-25</span></span>
     <span style="margin-left: 50px;">RESULT: <span id="m_status">Pass</span></span>
   </div>
 
@@ -319,13 +319,13 @@
     document.getElementById('m_resultDate').innerText = data.resultDate;
     document.getElementById('m_status').innerText = data.status;
 
-    // Construct Clean Full Verification Link
+    // Short & Clean Verification URL for Fast Scanning
     let baseUrl = window.location.href.split('?')[0];
     let verifyUrl = baseUrl.replace('index.html', '') + 'verify.html?' + new URLSearchParams(data).toString();
 
-    // High Quality QR Code Image API (size=120x120 & margin=2 for easy camera scan)
-    const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=120x120&margin=2&data=${encodeURIComponent(verifyUrl)}`;
-    document.getElementById("qrcode").innerHTML = `<img src="${qrApiUrl}" alt="QR Code" width="100" height="100" style="display:block;">`;
+    // High Clarity QR Code (150x150 with Low Error Correction Level for Bigger Dots)
+    const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&ecc=L&margin=1&data=${encodeURIComponent(verifyUrl)}`;
+    document.getElementById("qrcode").innerHTML = `<img src="${qrApiUrl}" alt="QR Code" width="85" height="85" style="display:block;">`;
 
     document.getElementById('marksheetArea').style.display = 'block';
     window.scrollTo({ top: document.getElementById('marksheetArea').offsetTop, behavior: 'smooth' });
