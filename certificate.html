@@ -26,7 +26,7 @@
       border: 1px solid #aaa;
     }
 
-    /* Colorful Background Watermark */
+    /* Colorful Background Watermark Emblem */
     .cert-container::before {
       content: "";
       position: absolute;
@@ -36,14 +36,14 @@
       height: 60%;
       background: url('https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg') no-repeat center;
       background-size: contain;
-      opacity: 0.12; /* Watermark transparency */
+      opacity: 0.12;
       z-index: 0;
       pointer-events: none;
     }
 
     .cert-content { position: relative; z-index: 1; }
 
-    .top-info { display: flex; justify-content: space-between; font-size: 11px; font-weight: bold; }
+    .top-info { display: flex; justify-content: space-between; font-size: 11px; font-weight: bold; margin-bottom: 10px; }
     
     .header-sec { text-align: center; margin-top: 5px; margin-bottom: 15px; }
     .header-sec img { width: 45px; }
@@ -52,10 +52,11 @@
     .title-ncvt { font-size: 12px; font-weight: bold; margin-top: 2px; }
     .cert-title { font-size: 15px; font-weight: bold; text-decoration: underline; margin-top: 5px; color: #000; }
 
-    .photo-qr-area { display: flex; justify-content: space-between; position: absolute; top: 30px; right: 40px; gap: 10px; }
-    .photo-box { width: 85px; height: 100px; border: 1px solid #000; display: flex; align-items: center; justify-content: center; background: #f9f9f9; overflow: hidden; }
+    /* Left Photo & Right QR Positions */
+    .photo-box { position: absolute; top: 30px; left: 10px; width: 85px; height: 100px; border: 1px solid #000; display: flex; align-items: center; justify-content: center; background: #f9f9f9; overflow: hidden; }
     .photo-box img { width: 100%; height: 100%; object-fit: cover; }
-    #qrcode { border: 1px solid #000; padding: 4px; background: #fff; height: 90px; }
+    
+    #qrcode { position: absolute; top: 30px; right: 10px; border: 1px solid #000; padding: 4px; background: #fff; height: 80px; width: 80px; }
 
     /* Content Fields Grid */
     .details-table { width: 100%; margin-top: 20px; font-size: 12px; line-height: 2.1; }
@@ -143,17 +144,17 @@
 <div class="cert-container" id="certArea">
   <div class="cert-content">
     
-    <div class="top-info">
-      <div>रोल नं. Roll No. <span id="c_roll">00150803159242</span></div>
-      <div style="margin-right: 180px;">प्रमाण-पत्र सं. Certificate No. <span id="c_certNo">1603212401</span></div>
+    <!-- Photo Left Side -->
+    <div class="photo-box">
+      <img src="https://via.placeholder.com/85x100?text=Photo" alt="Student Photo" id="studentImg">
     </div>
 
-    <!-- Photo & QR Code -->
-    <div class="photo-qr-area">
-      <div class="photo-box">
-        <img src="https://via.placeholder.com/85x100?text=Photo" alt="Student Photo" id="studentImg">
-      </div>
-      <div id="qrcode"></div>
+    <!-- QR Code Right Side -->
+    <div id="qrcode"></div>
+
+    <div class="top-info" style="padding: 0 100px;">
+      <div>रोल नं. Roll No. <span id="c_roll">00150803159242</span></div>
+      <div>प्रमाण-पत्र सं. Certificate No. <span id="c_certNo">1603212401</span></div>
     </div>
 
     <div class="header-sec">
