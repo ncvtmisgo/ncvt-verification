@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Certificate Verification</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; text-align: center; }
+    .card { border: 1px solid #ccc; padding: 20px; display: inline-block; border-radius: 8px; }
+  </style>
+</head>
+<body>
+  <div class="card" id="details">Loading...</div>
+
+  <script>
+    // Students ka Data
+    const students = {
+      "1603212401": { name: "SUNIL KUMAR", father: "PREM KUMAR", trade: "Plumber", roll: "00150803159242" }
+    };
+
+    // URL se parameter read karna (?id=1603212401)
+    const urlParams = new URLSearchParams(window.location.search);
+    const certId = urlParams.get('id');
+
+    const container = document.getElementById('details');
+    if (students[certId]) {
+      const s = students[certId];
+      container.innerHTML = `
+        <h2>Certificate Verified ✅</h2>
+        <p><b>Name:</b> ${s.name}</p>
+        <p><b>Father Name:</b> ${s.father}</p>
+        <p><b>Trade:</b> ${s.trade}</p>
+        <p><b>Roll No:</b> ${s.roll}</p>
+      `;
+    } else {
+      container.innerHTML = "<h2>❌ Invalid Certificate</h2>";
+    }
+  </script>
+</body>
+</html>
