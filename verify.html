@@ -1,38 +1,60 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
   <title>Certificate Verification</title>
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; text-align: center; }
-    .card { border: 1px solid #ccc; padding: 20px; display: inline-block; border-radius: 8px; }
+    body { font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background: #f4f6f9; }
+    .card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 100%; max-width: 450px; text-align: left; }
+    .status { color: #2e7d32; font-weight: bold; font-size: 20px; text-align: center; margin-bottom: 20px; }
+    .field { margin-bottom: 12px; font-size: 15px; }
+    .field strong { color: #333; }
+    .error { color: #d32f2f; text-align: center; font-size: 22px; font-weight: bold; }
   </style>
 </head>
 <body>
+
   <div class="card" id="details">Loading...</div>
 
   <script>
-    // Students ka Data
+    // Student Database
     const students = {
-      "1603212401": { name: "SUNIL KUMAR", father: "PREM KUMAR", trade: "Plumber", roll: "00150803159242" }
+      "00150803159242": {
+        name: "SUNIL KUMAR",
+        father: "PREM KUMAR",
+        dob: "19-Jul-87",
+        trade: "Plumber",
+        examDate: "Jul 2016",
+        iti: "PR03000039 - Govt. ITI, Pathankot",
+        marks: "536 / 700",
+        status: "Pass"
+      }
     };
 
-    // URL se parameter read karna (?id=1603212401)
+    // URL parameter read karna (?roll=00150803159242 ya ?id=00150803159242)
     const urlParams = new URLSearchParams(window.location.search);
-    const certId = urlParams.get('id');
+    const rollNo = urlParams.get('roll') || urlParams.get('id');
 
     const container = document.getElementById('details');
-    if (students[certId]) {
-      const s = students[certId];
+
+    if (rollNo && students[rollNo]) {
+      const s = students[rollNo];
       container.innerHTML = `
-        <h2>Certificate Verified ✅</h2>
-        <p><b>Name:</b> ${s.name}</p>
-        <p><b>Father Name:</b> ${s.father}</p>
-        <p><b>Trade:</b> ${s.trade}</p>
-        <p><b>Roll No:</b> ${s.roll}</p>
+        <div class="status">✅ Verified Certificate</div>
+        <div class="field"><strong>Roll Number:</strong> ${rollNo}</div>
+        <div class="field"><strong>Student Name:</strong> ${s.name}</div>
+        <div class="field"><strong>Father's Name:</strong> ${s.father}</div>
+        <div class="field"><strong>Date of Birth:</strong> ${s.dob}</div>
+        <div class="field"><strong>Trade Name:</strong> ${s.trade}</div>
+        <div class="field"><strong>Exam Month-Year:</strong> ${s.examDate}</div>
+        <div class="field"><strong>ITI Name:</strong> ${s.iti}</div>
+        <div class="field"><strong>Total Marks:</strong> ${s.marks}</div>
+        <div class="field"><strong>Result Status:</strong> ${s.status}</div>
       `;
     } else {
-      container.innerHTML = "<h2>❌ Invalid Certificate</h2>";
+      container.innerHTML = `<div class="error">❌ Invalid Certificate</div>`;
     }
   </script>
+
 </body>
 </html>
