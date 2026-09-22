@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>NCVT Online Marksheet Verification</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #eef2f5; display: flex; justify-content: center; padding: 30px; }
+    .ms-box { background: white; border: 2px solid #e65100; width: 100%; max-width: 700px; padding: 25px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); }
+    .header { text-align: center; border-bottom: 2px solid #e65100; padding-bottom: 10px; margin-bottom: 20px; }
+    .header h2 { margin: 5px; color: #e65100; }
+    .table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+    .table th, .table td { border: 1px solid #ccc; padding: 10px; text-align: left; }
+    .table th { background: #f5f5f5; }
+    .nav-btn { text-align: center; margin-top: 20px; }
+    .nav-btn a { background: #0d47a1; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+<div class="ms-box">
+  <div class="header">
+    <h3>NATIONAL COUNCIL FOR VOCATIONAL TRAINING</h3>
+    <h2>OFFICIAL ACADEMIC MARKSHEET</h2>
+  </div>
+
+  <div id="msDetails">Loading...</div>
+
+  <div class="nav-btn">
+    <a id="certSwitchLink">Switch to Certificate View 📜</a>
+  </div>
+</div>
+
+<script>
+  const p = new URLSearchParams(window.location.search);
+  
+  if (p.get('roll')) {
+    document.getElementById('msDetails').innerHTML = `
+      <p><b>Roll No:</b> ${p.get('roll')} | <b>Name:</b> ${p.get('name')}</p>
+      <p><b>Trade:</b> ${p.get('trade')} | <b>Exam:</b> ${p.get('examDate')}</p>
+      
+      <table class="table">
+        <tr>
+          <th>Subject / Component</th>
+          <th>Max Marks</th>
+          <th>Marks Obtained</th>
+        </tr>
+        <tr>
+          <td>Trade Theory & Practical Aggregate</td>
+          <td>700</td>
+          <td><b>${p.get('marks')}</b></td>
+        </tr>
+        <tr>
+          <th>Total Result Status</th>
+          <th colspan="2" style="color:green; text-align:center;">${p.get('status')}</th>
+        </tr>
+      </table>
+    `;
+
+    document.getElementById('certSwitchLink').href = 'verify.html?' + p.toString();
+  } else {
+    document.getElementById('msDetails').innerHTML = "<h3>❌ Invalid Marksheet Record</h3>";
+  }
+</script>
+
+</body>
+</html>
