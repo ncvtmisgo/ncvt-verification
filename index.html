@@ -2,24 +2,52 @@
 <html lang="hi">
 <head>
   <meta charset="UTF-8">
-  <title>ITI Certificate Generator - Admin Panel</title>
+  <title>Admin - Certificate Generator</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <style>
     body { font-family: Arial, sans-serif; background: #f0f2f5; padding: 20px; }
-    .box { background: white; max-width: 500px; margin: auto; padding: 25px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    .form-box { background: white; max-width: 500px; margin: 0 auto 30px auto; padding: 25px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
     h2 { text-align: center; color: #0d47a1; margin-top: 0; }
-    label { font-weight: bold; display: block; margin-top: 10px; font-size: 13px; color: #333; }
+    label { font-weight: bold; display: block; margin-top: 10px; font-size: 13px; }
     input, select { width: 100%; padding: 8px; margin-top: 4px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
     button { width: 100%; padding: 12px; background: #0d47a1; color: white; border: none; font-size: 16px; font-weight: bold; cursor: pointer; border-radius: 4px; margin-top: 15px; }
-    button:hover { background: #1565c0; }
-    .result { margin-top: 20px; text-align: center; display: none; padding: 15px; background: #e8f5e9; border: 1px solid #c8e6c9; border-radius: 6px; }
-    .view-btn { display: inline-block; padding: 12px 20px; background: #28a745; color: white; text-decoration: none; font-weight: bold; border-radius: 4px; margin-top: 10px; }
+
+    /* Printable Certificate Layout */
+    .cert-border {
+      display: none;
+      background: white;
+      border: 6px double #0d47a1;
+      max-width: 750px;
+      margin: 20px auto;
+      padding: 30px;
+      position: relative;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+      font-family: 'Times New Roman', Times, serif;
+    }
+    .cert-header { text-align: center; border-bottom: 2px solid #0d47a1; padding-bottom: 10px; margin-bottom: 20px; }
+    .cert-header h4 { margin: 0; font-size: 13px; color: #444; }
+    .cert-header h2 { margin: 5px 0; font-size: 22px; color: #0d47a1; }
+    .cert-header h3 { margin: 0; font-size: 15px; color: #2e7d32; font-family: Arial, sans-serif; }
+    .details-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 15px; }
+    .details-table td { padding: 8px 10px; border-bottom: 1px solid #e0e0e0; }
+    .label-col { font-weight: bold; color: #333; width: 35%; font-family: Arial, sans-serif; font-size: 13px; }
+    .val-col { color: #000; font-weight: 600; width: 65%; }
+    .cert-footer { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 40px; }
+    .signature-line { border-top: 1px solid #000; width: 180px; text-align: center; font-size: 12px; font-weight: bold; font-family: Arial, sans-serif; }
+    #qrcode { position: absolute; top: 25px; right: 25px; border: 1px solid #0d47a1; padding: 3px; background: #fff; }
+
+    @media print {
+      body { background: white; padding: 0; }
+      .form-box, .no-print { display: none !important; }
+      .cert-border { display: block !important; border: 5px double #0d47a1; box-shadow: none; margin: 0; max-width: 100%; }
+    }
   </style>
 </head>
 <body>
 
-<div class="box">
+<div class="form-box no-print">
   <h2>Generate Student Certificate</h2>
-  <form id="saveForm">
+  <form id="studentForm">
     <label>Roll Number (Unique ID):</label>
     <input type="text" id="roll" placeholder="e.g. 261250100569" required>
 
@@ -53,26 +81,45 @@
       <option value="Fail">Fail</option>
     </select>
 
-    <button type="submit" id="submitBtn">Create Official Certificate</button>
+    <button type="submit">Generate Print Certificate & QR</button>
   </form>
+</div>
 
-  <div class="result" id="resultBox">
-    <p style="color: green; font-weight: bold; margin: 0;">✅ Certificate Ready & Data Saved!</p>
-    <a id="viewBtn" class="view-btn" target="_blank">🖨️ Open & Print Certificate</a>
+<!-- Certificate to Print -->
+<div class="cert-border" id="certArea">
+  <div id="qrcode"></div>
+  <div class="cert-header">
+    <h4>GOVERNMENT OF INDIA / भारत सरकार</h4>
+    <h4>MINISTRY OF SKILL DEVELOPMENT & ENTREPRENEURSHIP</h4>
+    <h2>NATIONAL TRADE CERTIFICATE</h2>
+    <h3>( National Council for Vocational Training )</h3>
+  </div>
+
+  <p style="text-align: center; font-style: italic; margin-bottom: 15px;">
+    This is to certify that the person named below has successfully completed the prescribed course of training and passed the All India Trade Test.
+  </p>
+
+  <div id="certContent"></div>
+
+  <div class="cert-footer">
+    <div style="font-size: 11px; font-family: Arial, sans-serif;">
+      <p style="margin: 0; color: #2e7d32; font-weight: bold;">Status: Authenticated & Digitally Verified</p>
+    </div>
+    <div class="signature">
+      <div class="signature-line">Controller of Examinations<br>NCVT, New Delhi</div>
+    </div>
+  </div>
+
+  <div style="text-align: center; margin-top: 25px;" class="no-print">
+    <button onclick="window.print()" style="padding: 10px 20px; background: #28a745; color: white; border: none; font-size: 16px; font-weight: bold; cursor: pointer; border-radius: 4px;">🖨️ Print Certificate For Student</button>
   </div>
 </div>
 
 <script>
-  const API_URL = "https://script.google.com/macros/s/AKfycbxZ8LV9kzxSSn98-Bc1W9_oYxSWfWsziGeSNPXWz3DqAtLYGI-_75F7B3zc3_-a5lp6QA/exec";
-
-  document.getElementById('saveForm').addEventListener('submit', function(e) {
+  document.getElementById('studentForm').addEventListener('submit', function(e) {
     e.preventDefault();
-    
-    const btn = document.getElementById('submitBtn');
-    btn.innerText = "Processing...";
-    btn.disabled = true;
 
-    const student = {
+    const data = {
       roll: document.getElementById('roll').value.trim(),
       name: document.getElementById('name').value.trim(),
       father: document.getElementById('father').value.trim(),
@@ -85,21 +132,38 @@
       status: document.getElementById('status').value
     };
 
-    // Send to Google Sheet
-    fetch(API_URL, {
-      method: "POST",
-      body: JSON.stringify(student)
-    }).catch(err => console.log(err));
+    // Verification URL that will open on QR Scan
+    const params = new URLSearchParams(data).toString();
+    const verifyUrl = `${window.location.origin}${window.location.pathname.replace('index.html', '')}verify.html?${params}`;
 
-    // Create Direct URL with Parameters so verification ALWAYS works immediately
-    const params = new URLSearchParams(student).toString();
-    const verifyUrl = `verify.html?${params}`;
+    // Clear previous QR
+    document.getElementById("qrcode").innerHTML = "";
 
-    btn.innerText = "Create Official Certificate";
-    btn.disabled = false;
-    
-    document.getElementById('viewBtn').href = verifyUrl;
-    document.getElementById('resultBox').style.display = 'block';
+    // Generate QR Code containing only Verification URL
+    new QRCode(document.getElementById("qrcode"), {
+      text: verifyUrl,
+      width: 90,
+      height: 90
+    });
+
+    // Populate Certificate Table
+    document.getElementById('certContent').innerHTML = `
+      <table class="details-table">
+        <tr><td class="label-col">Roll / Registration No:</td><td class="val-col">${data.roll}</td></tr>
+        <tr><td class="label-col">Trainee Name:</td><td class="val-col">${data.name}</td></tr>
+        <tr><td class="label-col">Father's Name:</td><td class="val-col">${data.father}</td></tr>
+        <tr><td class="label-col">Mother's Name:</td><td class="val-col">${data.mother || 'N/A'}</td></tr>
+        <tr><td class="label-col">Date of Birth:</td><td class="val-col">${data.dob}</td></tr>
+        <tr><td class="label-col">Trade Name:</td><td class="val-col">${data.trade}</td></tr>
+        <tr><td class="label-col">Exam Month / Year:</td><td class="val-col">${data.examDate}</td></tr>
+        <tr><td class="label-col">Name of Institute (ITI):</td><td class="val-col">${data.iti}</td></tr>
+        <tr><td class="label-col">Marks Secured:</td><td class="val-col">${data.marks}</td></tr>
+        <tr><td class="label-col">Result Status:</td><td class="val-col" style="color: #2e7d32; font-weight: bold;">${data.status.toUpperCase()}</td></tr>
+      </table>
+    `;
+
+    document.getElementById('certArea').style.display = 'block';
+    window.scrollTo({ top: document.getElementById('certArea').offsetTop, behavior: 'smooth' });
   });
 </script>
 
