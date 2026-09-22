@@ -2,59 +2,59 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Certificate Verification</title>
+  <title>NCVT Online Certificate Verification</title>
   <style>
-    body { font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background: #f4f6f9; }
-    .card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 100%; max-width: 450px; text-align: left; }
-    .status { color: #2e7d32; font-weight: bold; font-size: 20px; text-align: center; margin-bottom: 20px; }
-    .field { margin-bottom: 12px; font-size: 15px; }
-    .field strong { color: #333; }
-    .error { color: #d32f2f; text-align: center; font-size: 22px; font-weight: bold; }
+    body { font-family: Arial, sans-serif; background: #eef2f5; display: flex; justify-content: center; padding: 30px; }
+    .cert-box { background: white; border: 3px double #0d47a1; width: 100%; max-width: 700px; padding: 25px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); }
+    .header { text-align: center; border-bottom: 2px solid #0d47a1; padding-bottom: 10px; margin-bottom: 20px; }
+    .header h3 { margin: 2px; color: #333; }
+    .header h2 { margin: 5px; color: #0d47a1; }
+    .badge { background: #2e7d32; color: white; padding: 6px 12px; font-weight: bold; display: inline-block; border-radius: 4px; margin-bottom: 15px; }
+    .row { display: flex; margin-bottom: 10px; border-bottom: 1px dashed #ddd; padding-bottom: 5px; }
+    .label { font-weight: bold; width: 40%; color: #555; }
+    .val { width: 60%; color: #111; font-weight: 600; }
+    .nav-btn { text-align: center; margin-top: 20px; }
+    .nav-btn a { background: #e65100; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold; }
   </style>
 </head>
 <body>
 
-  <div class="card" id="details">Loading...</div>
+<div class="cert-box">
+  <div class="header">
+    <h3>GOVERNMENT OF INDIA</h3>
+    <h2>NATIONAL TRADE CERTIFICATE</h2>
+    <div class="badge">✅ Authenticated & Verified Record</div>
+  </div>
 
-  <script>
-    // Student Database
-    const students = {
-      "00150803159242": {
-        name: "SUNIL KUMAR",
-        father: "PREM KUMAR",
-        dob: "19-Jul-87",
-        trade: "Plumber",
-        examDate: "Jul 2016",
-        iti: "PR03000039 - Govt. ITI, Pathankot",
-        marks: "536 / 700",
-        status: "Pass"
-      }
-    };
+  <div id="certDetails">Loading...</div>
 
-    // URL parameter read karna (?roll=00150803159242 ya ?id=00150803159242)
-    const urlParams = new URLSearchParams(window.location.search);
-    const rollNo = urlParams.get('roll') || urlParams.get('id');
+  <div class="nav-btn">
+    <a id="msSwitchLink">Switch to Marksheet View 📊</a>
+  </div>
+</div>
 
-    const container = document.getElementById('details');
+<script>
+  const p = new URLSearchParams(window.location.search);
+  
+  if (p.get('roll')) {
+    document.getElementById('certDetails').innerHTML = `
+      <div class="row"><div class="label">Roll Number:</div><div class="val">${p.get('roll')}</div></div>
+      <div class="row"><div class="label">Student Name:</div><div class="val">${p.get('name')}</div></div>
+      <div class="row"><div class="label">Father's Name:</div><div class="val">${p.get('father')}</div></div>
+      <div class="row"><div class="label">Mother's Name:</div><div class="val">${p.get('mother') || 'N/A'}</div></div>
+      <div class="row"><div class="label">Date of Birth:</div><div class="val">${p.get('dob')}</div></div>
+      <div class="row"><div class="label">Trade Name:</div><div class="val">${p.get('trade')}</div></div>
+      <div class="row"><div class="label">Session / Exam Date:</div><div class="val">${p.get('examDate')}</div></div>
+      <div class="row"><div class="label">Institute Name:</div><div class="val">${p.get('iti')}</div></div>
+      <div class="row"><div class="label">Result Status:</div><div class="val" style="color:green;">${p.get('status')}</div></div>
+    `;
 
-    if (rollNo && students[rollNo]) {
-      const s = students[rollNo];
-      container.innerHTML = `
-        <div class="status">✅ Verified Certificate</div>
-        <div class="field"><strong>Roll Number:</strong> ${rollNo}</div>
-        <div class="field"><strong>Student Name:</strong> ${s.name}</div>
-        <div class="field"><strong>Father's Name:</strong> ${s.father}</div>
-        <div class="field"><strong>Date of Birth:</strong> ${s.dob}</div>
-        <div class="field"><strong>Trade Name:</strong> ${s.trade}</div>
-        <div class="field"><strong>Exam Month-Year:</strong> ${s.examDate}</div>
-        <div class="field"><strong>ITI Name:</strong> ${s.iti}</div>
-        <div class="field"><strong>Total Marks:</strong> ${s.marks}</div>
-        <div class="field"><strong>Result Status:</strong> ${s.status}</div>
-      `;
-    } else {
-      container.innerHTML = `<div class="error">❌ Invalid Certificate</div>`;
-    }
-  </script>
+    // Same data pass to Marksheet link
+    document.getElementById('msSwitchLink').href = 'marksheet.html?' + p.toString();
+  } else {
+    document.getElementById('certDetails').innerHTML = "<h3>❌ Invalid Certificate or Data Missing</h3>";
+  }
+</script>
 
 </body>
 </html>
