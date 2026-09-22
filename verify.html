@@ -2,57 +2,50 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>NCVT Online Certificate Verification</title>
+  <title>NCVT Online Verification</title>
   <style>
     body { font-family: Arial, sans-serif; background: #eef2f5; display: flex; justify-content: center; padding: 30px; }
-    .cert-box { background: white; border: 3px double #0d47a1; width: 100%; max-width: 700px; padding: 25px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); }
-    .header { text-align: center; border-bottom: 2px solid #0d47a1; padding-bottom: 10px; margin-bottom: 20px; }
-    .header h3 { margin: 2px; color: #333; }
-    .header h2 { margin: 5px; color: #0d47a1; }
-    .badge { background: #2e7d32; color: white; padding: 6px 12px; font-weight: bold; display: inline-block; border-radius: 4px; margin-bottom: 15px; }
-    .row { display: flex; margin-bottom: 10px; border-bottom: 1px dashed #ddd; padding-bottom: 5px; }
+    .card { background: white; padding: 25px; border-radius: 8px; width: 100%; max-width: 600px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+    .row { display: flex; margin-bottom: 8px; border-bottom: 1px solid #eee; padding-bottom: 4px; }
     .label { font-weight: bold; width: 40%; color: #555; }
-    .val { width: 60%; color: #111; font-weight: 600; }
-    .nav-btn { text-align: center; margin-top: 20px; }
-    .nav-btn a { background: #e65100; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold; }
+    .val { width: 60%; color: #111; }
+    .error { color: red; font-weight: bold; text-align: center; }
   </style>
 </head>
 <body>
 
-<div class="cert-box">
-  <div class="header">
-    <h3>GOVERNMENT OF INDIA</h3>
-    <h2>NATIONAL TRADE CERTIFICATE</h2>
-    <div class="badge">✅ Authenticated & Verified Record</div>
-  </div>
-
-  <div id="certDetails">Loading...</div>
-
-  <div class="nav-btn">
-    <a id="msSwitchLink">Switch to Marksheet View 📊</a>
-  </div>
-</div>
+<div class="card" id="content">Loading Data...</div>
 
 <script>
-  const p = new URLSearchParams(window.location.search);
-  
-  if (p.get('roll')) {
-    document.getElementById('certDetails').innerHTML = `
-      <div class="row"><div class="label">Roll Number:</div><div class="val">${p.get('roll')}</div></div>
-      <div class="row"><div class="label">Student Name:</div><div class="val">${p.get('name')}</div></div>
-      <div class="row"><div class="label">Father's Name:</div><div class="val">${p.get('father')}</div></div>
-      <div class="row"><div class="label">Mother's Name:</div><div class="val">${p.get('mother') || 'N/A'}</div></div>
-      <div class="row"><div class="label">Date of Birth:</div><div class="val">${p.get('dob')}</div></div>
-      <div class="row"><div class="label">Trade Name:</div><div class="val">${p.get('trade')}</div></div>
-      <div class="row"><div class="label">Session / Exam Date:</div><div class="val">${p.get('examDate')}</div></div>
-      <div class="row"><div class="label">Institute Name:</div><div class="val">${p.get('iti')}</div></div>
-      <div class="row"><div class="label">Result Status:</div><div class="val" style="color:green;">${p.get('status')}</div></div>
-    `;
+  const urlParams = new URLSearchParams(window.location.search);
+  const rollNo = urlParams.get('roll') || urlParams.get('id');
 
-    // Same data pass to Marksheet link
-    document.getElementById('msSwitchLink').href = 'marksheet.html?' + p.toString();
+  if (!rollNo) {
+    document.getElementById('content').innerHTML = "<div class='error'>❌ Roll Number Missing</div>";
   } else {
-    document.getElementById('certDetails').innerHTML = "<h3>❌ Invalid Certificate or Data Missing</h3>";
+    // Save kiye huye JSON file se data fetch karna
+    fetch('students.json')
+      .then(response => response.json())
+      .then(data => {
+        if (data[rollNo]) {
+          const s = data[rollNo];
+          document.getElementById('content').innerHTML = `
+            <h2 style="color:green; text-align:center;">✅ Verified Certificate</h2>
+            <div class="row"><div class="label">Roll Number:</div><div class="val">${rollNo}</div></div>
+            <div class="row"><div class="label">Student Name:</div><div class="val">${s.name}</div></div>
+            <div class="row"><div class="label">Father Name:</div><div class="val">${s.father}</div></div>
+            <div class="row"><div class="label">Trade:</div><div class="val">${s.trade}</div></div>
+            <div class="row"><div class="label">Exam Date:</div><div class="val">${s.examDate}</div></div>
+            <div class="row"><div class="label">Marks:</div><div class="val">${s.marks}</div></div>
+            <div class="row"><div class="label">Status:</div><div class="val" style="color:green; font-weight:bold;">${s.status}</div></div>
+          `;
+        } else {
+          document.getElementById('content').innerHTML = "<div class='error'>❌ Invalid Roll Number / Certificate Not Found</div>";
+        }
+      })
+      .catch(err => {
+        document.getElementById('content').innerHTML = "<div class='error'>❌ Error loading database</div>";
+      });
   }
 </script>
 
