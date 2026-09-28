@@ -28,17 +28,11 @@
             border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); display: none; position: relative; 
         }
 
-        /* Tabs for Switching */
-        .doc-tabs { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; }
-        .tab-btn { padding: 8px 20px; background: #ddd; border: none; font-weight: bold; cursor: pointer; border-radius: 4px; }
-        .tab-btn.active { background: #003366; color: white; }
-        
-        .doc-section { display: none; }
-        .doc-section.active { display: block; }
-
         /* NTC Certificate Design Styling */
         .ntc-border { border: 3px solid #b8860b; padding: 20px; position: relative; background: #fff; min-height: 600px; box-sizing: border-box; }
         .ntc-top { display: flex; justify-content: space-between; align-items: flex-start; font-size: 12px; font-weight: bold; }
+        
+        /* Student Photo on Left Side */
         .ntc-photo-box { width: 85px; height: 105px; border: 1px solid #999; background: #eee; display: flex; align-items: center; justify-content: center; overflow: hidden; }
         .ntc-photo-box img { width: 100%; height: 100%; object-fit: cover; }
         
@@ -64,7 +58,7 @@
         .edit-btn { flex: 1; padding: 12px; background: #003366; color: white; border: none; font-size: 16px; border-radius: 4px; cursor: pointer; font-weight: bold; }
 
         @media print {
-            .no-print, .action-btns, .doc-tabs { display: none !important; }
+            .no-print, .action-btns { display: none !important; }
             body { background: white; padding: 0; margin: 0; }
             .container { box-shadow: none; padding: 10px; display: block !important; border: none; width: 100%; }
         }
@@ -76,7 +70,7 @@
     <div class="home-container no-print" id="home-portal">
         <h2>NCVT ITI Admin & Certificate Portal</h2>
         <div class="search-box">
-            <p style="font-size: 13px; color: #555; margin-bottom: 8px;">Roll Number darj karke certificate dekho[cite: 18]:</p>
+            <p style="font-size: 13px; color: #555; margin-bottom: 8px;">Roll Number darj karke certificate dekho:</p>
             <input type="text" id="search-roll" placeholder="Enter Roll Number (e.g. 00150803159242)">
             <button class="search-btn" onclick="searchStudent()">Search</button>
         </div>
@@ -104,16 +98,17 @@
     <!-- Document Container -->
     <div class="container" id="certificate-box">
         
-        <!-- NTC Certificate Section (Matching sample PDF design) -->
+        <!-- NTC Certificate Section -->
         <div id="section-ntc" class="doc-section active">
             <div class="ntc-border">
                 <div class="ntc-top">
-                    <div>
-                        <div style="font-size: 11px;">रोल नं. Roll No. <span id="c-roll"></span>[cite: 18]</div>
-                        <div style="font-size: 11px; margin-top: 2px;">प्रमाण-पत्र सं. Certificate No. <span id="c-certno"></span>[cite: 18]</div>
-                    </div>
+                    <!-- Student Photo on Left Side -->
                     <div class="ntc-photo-box">
                         <img id="c-photo" src="" alt="Student Photo">
+                    </div>
+                    <div>
+                        <div style="font-size: 11px; text-align: right;">रोल नं. Roll No. <span id="c-roll"></span></div>
+                        <div style="font-size: 11px; text-align: right; margin-top: 2px;">प्रमाण-पत्र सं. Certificate No. <span id="c-certno"></span></div>
                     </div>
                 </div>
 
@@ -122,63 +117,63 @@
                 </div>
 
                 <div class="ntc-header-text">
-                    <h4>भारत सरकार / GOVERNMENT OF INDIA[cite: 18]</h4>
-                    <h4>कौशल विकास एवं उद्यमिता मंत्रालय / MINISTRY OF SKILL DEVELOPMENT AND ENTREPRENEURSHIP[cite: 18]</h4>
-                    <h3>राष्ट्रीय व्यावसायिक प्रशिक्षण परिषद् / NATIONAL COUNCIL FOR VOCATIONAL TRAINING[cite: 18]</h3>
-                    <h2>राष्ट्रीय व्यवसाय प्रमाण-पत्र / NATIONAL TRADE CERTIFICATE[cite: 18]</h2>
+                    <h4>भारत सरकार / GOVERNMENT OF INDIA</h4>
+                    <h4>कौशल विकास एवं उद्यमिता मंत्रालय / MINISTRY OF SKILL DEVELOPMENT AND ENTREPRENEURSHIP</h4>
+                    <h3>राष्ट्रीय व्यावसायिक प्रशिक्षण परिषद् / NATIONAL COUNCIL FOR VOCATIONAL TRAINING</h3>
+                    <h2>राष्ट्रीय व्यवसाय प्रमाण-पत्र / NATIONAL TRADE CERTIFICATE</h2>
                 </div>
 
                 <div class="ntc-body">
                     <div class="ntc-row">
-                        <div class="ntc-label">श्री / श्रीमती / कुमारी / Shri / Smt / Kumari[cite: 18]:</div>
+                        <div class="ntc-label">श्री / श्रीमती / कुमारी / Shri / Smt / Kumari:</div>
                         <div class="ntc-value" id="c-name"></div>
                     </div>
                     <div class="ntc-row">
-                        <div class="ntc-label">पुत्र / पत्नी / पुत्री श्री / Son / Wife / Daughter of Shri[cite: 18]:</div>
+                        <div class="ntc-label">पुत्र / पत्नी / पुत्री श्री / Son / Wife / Daughter of Shri:</div>
                         <div class="ntc-value" id="c-father"></div>
                     </div>
                     <div class="ntc-row">
-                        <div class="ntc-label">माता का नाम / Mother's name Smt.[cite: 18]:</div>
+                        <div class="ntc-label">माता का नाम / Mother's name Smt.:</div>
                         <div class="ntc-value" id="c-mother"></div>
                     </div>
                     <div class="ntc-row">
-                        <div class="ntc-label">जन्म तिथि / Date of Birth[cite: 18]:</div>
+                        <div class="ntc-label">जन्म तिथि / Date of Birth:</div>
                         <div class="ntc-value" id="c-dob"></div>
                     </div>
                     <div class="ntc-row">
-                        <div class="ntc-label">संस्था का नाम / Name of the Institute[cite: 18]:</div>
+                        <div class="ntc-label">संस्था का नाम / Name of the Institute:</div>
                         <div class="ntc-value" id="c-iti"></div>
                     </div>
                     <div class="ntc-row">
-                        <div class="ntc-label">व्यवसाय का नाम / Name of the Trade[cite: 18]:</div>
+                        <div class="ntc-label">व्यवसाय का नाम / Name of the Trade:</div>
                         <div class="ntc-value" id="c-trade"></div>
                     </div>
                     <div class="ntc-row">
-                        <div class="ntc-label">प्रशिक्षण अवधि / Training Duration[cite: 18]:</div>
+                        <div class="ntc-label">प्रशिक्षण अवधि / Training Duration:</div>
                         <div class="ntc-value" id="c-dur"></div>
                     </div>
                     <div class="ntc-row">
-                        <div class="ntc-label">प्रवेश सत्र / Admission Session[cite: 18]:</div>
+                        <div class="ntc-label">प्रवेश सत्र / Admission Session:</div>
                         <div class="ntc-value" id="c-session"></div>
                     </div>
                     <div class="ntc-row" style="font-size: 11.5px; margin-top: 8px;">
-                        <div>को अखिल भारतीय व्यवसाय परीक्षा having passed All India Trade Test, माह Month <strong id="c-exam"></strong> वर्ष Year <strong id="c-year"></strong> उत्तीर्ण होने पर यह व्यवसाय प्रमाण-पत्र प्रदान किया जाता है is hereby awarded this Trade Certificate[cite: 18].</div>
+                        <div>को अखिल भारतीय व्यवसाय परीक्षा having passed All India Trade Test, माह Month <strong id="c-exam"></strong> वर्ष Year <strong id="c-year"></strong> उत्तीर्ण होने पर यह व्यवसाय प्रमाण-पत्र प्रदान किया जाता है is hereby awarded this Trade Certificate.</div>
                     </div>
                 </div>
 
                 <div class="ntc-footer">
                     <div>
-                        <p><strong>दिनांक Date:</strong> <span id="c-date">30-Dec-2016</span>[cite: 18]</p>
+                        <p><strong>दिनांक Date:</strong> <span id="c-date">30-Dec-2016</span></p>
                     </div>
                     <div style="text-align: center;">
-                        <div style="font-family: cursive; font-size: 14px; color: #003366;">सदस्य सचिव[cite: 18]</div>
-                        <div style="font-weight: bold;">Member Secretary[cite: 18]</div>
-                        <div style="font-size: 10px;">राष्ट्रीय व्यावसायिक प्रशिक्षण परिषद[cite: 18]</div>
+                        <div style="font-family: cursive; font-size: 14px; color: #003366;">सदस्य सचिव</div>
+                        <div style="font-weight: bold;">Member Secretary</div>
+                        <div style="font-size: 10px;">राष्ट्रीय व्यावसायिक प्रशिक्षण परिषद</div>
                     </div>
                 </div>
 
                 <div class="ntc-note">
-                    This is a computer generated certificate and it does not require any physical signature or attestation. All contents of this certificate can be verified for authenticity by scanning the QR code or visiting NCVT MIS portal[cite: 18].
+                    This is a computer generated certificate and it does not require any physical signature or attestation. All contents of this certificate can be verified for authenticity by scanning the QR code or visiting NCVT MIS portal.
                 </div>
             </div>
         </div>
