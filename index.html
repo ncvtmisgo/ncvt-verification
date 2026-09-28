@@ -36,13 +36,23 @@
         .doc-section { display: none; }
         .doc-section.active { display: block; }
 
-        /* Original ITI Certificate Design Styling */
-        .cert-border { border: 5px solid #003366; padding: 25px; position: relative; min-height: 550px; background: #fffdf9; }
-        .cert-header { text-align: center; margin-bottom: 20px; }
-        .cert-header h1 { color: #003366; font-size: 24px; margin: 5px 0; }
-        .cert-header h3 { color: #555; font-size: 16px; margin: 0; }
-        .cert-body { font-size: 15px; line-height: 2; text-align: center; margin-top: 40px; }
-        .cert-footer { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 80px; }
+        /* Original ITI Certificate Design (Matching sample PDF layout) */
+        .cert-border { border: 4px double #800000; padding: 25px; position: relative; background: #fff; min-height: 560px; box-sizing: border-box; }
+        .cert-top-flex { display: flex; justify-content: space-between; align-items: flex-start; font-size: 12px; font-weight: bold; }
+        .cert-center-emblem { text-align: center; margin-top: -10px; }
+        .cert-center-emblem img { width: 65px; height: auto; }
+        
+        .cert-header-text { text-align: center; margin-top: 10px; }
+        .cert-header-text h3 { font-size: 12px; color: #333; margin: 2px 0; }
+        .cert-header-text h2 { font-size: 15px; color: #800000; margin: 3px 0; font-weight: bold; }
+        .cert-header-text h1 { font-size: 20px; color: #003366; margin: 5px 0; }
+        
+        .cert-body-content { font-size: 13px; line-height: 1.8; margin-top: 25px; }
+        .cert-row { display: flex; margin-bottom: 8px; align-items: baseline; }
+        .cert-label { width: 230px; font-weight: bold; color: #333; font-size: 12px; }
+        .cert-value { flex-grow: 1; border-bottom: 1px dotted #333; padding-left: 8px; font-size: 13px; font-weight: bold; color: #000; }
+
+        .cert-footer-area { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 40px; font-size: 12px; }
 
         /* Marksheet Styling */
         .top-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
@@ -100,8 +110,10 @@
             <h4 style="color: #003366; margin-top: 0; margin-bottom: 10px;">Nava Student Data Add Karo (Permanent Database)</h4>
             <div class="form-grid">
                 <div class="form-group"><label>Roll Number:</label><input type="text" id="new-roll" value=""></div>
+                <div class="form-group"><label>Certificate No:</label><input type="text" id="new-certno" value="1603212401"></div>
                 <div class="form-group"><label>Student Name:</label><input type="text" id="new-name" value=""></div>
                 <div class="form-group"><label>Father's Name:</label><input type="text" id="new-father" value=""></div>
+                <div class="form-group"><label>Mother's Name:</label><input type="text" id="new-mother" value="JITTO"></div>
                 <div class="form-group"><label>Date of Birth:</label><input type="text" id="new-dob" value=""></div>
                 <div class="form-group"><label>Trade Name:</label><input type="text" id="new-trade" value=""></div>
                 <div class="form-group"><label>Exam Month-Year:</label><input type="text" id="new-exam" value=""></div>
@@ -119,12 +131,75 @@
         
         <!-- Switch Tabs -->
         <div class="doc-tabs no-print">
-            <button class="tab-btn active" onclick="switchTab('marksheet')">View Marksheet</button>
-            <button class="tab-btn" onclick="switchTab('certificate')">View Original Certificate</button>
+            <button class="tab-btn active" onclick="switchTab('certificate')">View Original Certificate</button>
+            <button class="tab-btn" onclick="switchTab('marksheet')">View Marksheet</button>
         </div>
 
-        <!-- 1. MARKSHEET SECTION -->
-        <div id="section-marksheet" class="doc-section active">
+        <!-- 1. ORIGINAL ITI CERTIFICATE SECTION (Matching sample PDF design) -->
+        <div id="section-certificate" class="doc-section active">
+            <div class="cert-border">
+                <div class="cert-top-flex">
+                    <div>रोल नं. Roll No. <span id="c-roll"></span></div>
+                    <div>प्रमाण-पत्र सं. Certificate No. <span id="c-certno"></span></div>
+                </div>
+
+                <div class="cert-center-emblem">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="Emblem">
+                </div>
+
+                <div class="cert-header-text">
+                    <h3>भारत सरकार / GOVERNMENT OF INDIA</h3>
+                    <h3>कौशल विकास एवं उद्यमिता मंत्रालय / MINISTRY OF SKILL DEVELOPMENT AND ENTREPRENEURSHIP</h3>
+                    <h2>राष्ट्रीय व्यावसायिक प्रशिक्षण परिषद् / NATIONAL COUNCIL FOR VOCATIONAL TRAINING</h2>
+                    <h1>राष्ट्रीय व्यवसाय प्रमाण-पत्र / NATIONAL TRADE CERTIFICATE</h1>
+                </div>
+
+                <div class="cert-body-content">
+                    <div class="cert-row">
+                        <div class="cert-label">श्री / श्रीमती / कुमारी / Shri / Smt / Kumari:</div>
+                        <div class="cert-value" id="c-name"></div>
+                    </div>
+                    <div class="cert-row">
+                        <div class="cert-label">पुत्र / पत्नी / पुत्री श्री / Son / Wife / Daughter of Shri:</div>
+                        <div class="cert-value" id="c-father"></div>
+                    </div>
+                    <div class="cert-row">
+                        <div class="cert-label">माता का नाम / Mother's name Smt.:</div>
+                        <div class="cert-value" id="c-mother"></div>
+                    </div>
+                    <div class="cert-row">
+                        <div class="cert-label">जन्म तिथि / Date of Birth:</div>
+                        <div class="cert-value" id="c-dob"></div>
+                    </div>
+                    <div class="cert-row">
+                        <div class="cert-label">संस्था का नाम / Name of the Institute:</div>
+                        <div class="cert-value" id="c-iti"></div>
+                    </div>
+                    <div class="cert-row">
+                        <div class="cert-label">व्यवसाय का नाम / Name of the Trade:</div>
+                        <div class="cert-value" id="c-trade"></div>
+                    </div>
+                    <div class="cert-row">
+                        <div class="cert-label">अखिल भारतीय व्यवसाय परीक्षा उत्तीर्ण होने पर:</div>
+                        <div class="cert-value">having passed All India Trade Test held in <span id="c-exam"></span></div>
+                    </div>
+                </div>
+
+                <div class="cert-footer-area">
+                    <div>
+                        <p><strong>दिनांक / Date:</strong> 30-Dec-2016</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-family: cursive; font-size: 15px; color: #003366;">सदस्य सचिव</div>
+                        <div>Member Secretary</div>
+                        <div style="font-size: 11px;">राष्ट्रीय व्यावसायिक प्रशिक्षण परिषद</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. MARKSHEET SECTION -->
+        <div id="section-marksheet" class="doc-section">
             <div class="top-header">
                 <div>
                     <div class="hindi-reg">अनुक्रमांक: <span id="disp-roll-hindi"></span></div>
@@ -223,37 +298,6 @@
             </div>
         </div>
 
-        <!-- 2. ORIGINAL ITI CERTIFICATE SECTION -->
-        <div id="section-certificate" class="doc-section">
-            <div class="cert-border">
-                <div style="text-align: center;">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="Emblem" style="width: 60px;">
-                </div>
-                <div class="cert-header">
-                    <h3>NATIONAL COUNCIL FOR VOCATIONAL TRAINING</h3>
-                    <h1>NATIONAL TRADE CERTIFICATE</h1>
-                    <p><i>(Under the Aegis of Ministry of Skill Development and Entrepreneurship, Government of India)</i></p>
-                </div>
-                <div class="cert-body">
-                    <p>This is to certify that <strong><span id="cert-name" style="font-size: 20px; color: #003366;"></span></strong></p>
-                    <p>Son / Daughter of Shri <strong><span id="cert-father"></span></strong></p>
-                    <p>Roll Number: <strong><span id="cert-roll"></span></strong> &nbsp;&nbsp;|&nbsp;&nbsp; Date of Birth: <strong><span id="cert-dob"></span></strong></p>
-                    <p>having successfully completed the training in the trade of <strong><span id="cert-trade" style="color: #003366;"></span></strong></p>
-                    <p>held in <strong><span id="cert-exam"></span></strong> under the Industrial Training Institute <strong><span id="cert-iti"></span></strong></p>
-                    <p>has been admitted to the <strong>NATIONAL TRADE CERTIFICATE</strong> passed with Result: <strong><span id="cert-result" style="color: green;"></span></strong>.</p>
-                </div>
-                <div class="cert-footer">
-                    <div>
-                        <p>Date: 12-Jun-22</p>
-                    </div>
-                    <div style="text-align: center;">
-                        <div style="font-family: cursive; font-size: 15px; color: #003366;">Director General</div>
-                        <div>Directorate General of Training</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <div class="action-btns">
             <button class="print-btn" onclick="window.print()">Print / Save as PDF</button>
             <button class="edit-btn" onclick="goHome()">Back to Admin Portal</button>
@@ -264,8 +308,8 @@
         // Permanent Student Database list
         const studentDatabase = {
             "00150803159242": {
-                name: "SUNIL KUMAR", father: "PREM KUMAR", dob: "19-Jul-87", trade: "Plumber",
-                exam: "Jul 2016", iti: "PR03000039 - Govt. ITI, Pathankot", marks: "536", result: "Pass", photo: "https://i.imgur.com/6VBx3io.png"
+                name: "SUNIL KUMAR", father: "PREM KUMAR", mother: "JITTO", certno: "1603212401", dob: "19-Jul-1987", trade: "Plumber",
+                exam: "Jul 2016", iti: "PR03000188-Satluj Institute of Vocational Edu. Village Sandhehasham Backside, PN Bank Firozepur Zira Road", marks: "536", result: "Pass", photo: "https://i.imgur.com/6VBx3io.png"
             }
         };
 
@@ -275,6 +319,17 @@
 
             if (roll && studentDatabase[roll]) {
                 const s = studentDatabase[roll];
+                // Certificate Data Binding
+                document.getElementById('c-roll').innerText = roll;
+                document.getElementById('c-certno').innerText = s.certno;
+                document.getElementById('c-name').innerText = s.name;
+                document.getElementById('c-father').innerText = s.father;
+                document.getElementById('c-mother').innerText = s.mother;
+                document.getElementById('c-dob').innerText = s.dob;
+                document.getElementById('c-iti').innerText = s.iti;
+                document.getElementById('c-trade').innerText = s.trade;
+                document.getElementById('c-exam').innerText = s.exam;
+
                 // Marksheet Data Binding
                 document.getElementById('disp-name').innerText = s.name;
                 document.getElementById('disp-roll').innerText = roll;
@@ -288,16 +343,6 @@
                 document.getElementById('disp-total2').innerText = s.marks;
                 document.getElementById('disp-result').innerText = s.result;
                 document.getElementById('disp-photo').src = s.photo;
-
-                // Certificate Data Binding
-                document.getElementById('cert-name').innerText = s.name;
-                document.getElementById('cert-father').innerText = s.father;
-                document.getElementById('cert-roll').innerText = roll;
-                document.getElementById('cert-dob').innerText = s.dob;
-                document.getElementById('cert-trade').innerText = s.trade;
-                document.getElementById('cert-exam').innerText = s.exam;
-                document.getElementById('cert-iti').innerText = s.iti;
-                document.getElementById('cert-result').innerText = s.result;
 
                 document.getElementById('home-portal').style.display = 'none';
                 document.getElementById('certificate-box').style.display = 'block';
@@ -315,11 +360,11 @@
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelectorAll('.doc-section').forEach(sec => sec.classList.remove('active'));
 
-            if(tabName === 'marksheet') {
-                document.getElementById('section-marksheet').classList.add('active');
+            if(tabName === 'certificate') {
+                document.getElementById('section-certificate').classList.add('active');
                 event.target.classList.add('active');
             } else {
-                document.getElementById('section-certificate').classList.add('active');
+                document.getElementById('section-marksheet').classList.add('active');
                 event.target.classList.add('active');
             }
         }
@@ -336,8 +381,10 @@
 
         function addNewStudent() {
             const r = document.getElementById('new-roll').value.trim();
+            const certno = document.getElementById('new-certno').value.trim();
             const name = document.getElementById('new-name').value;
             const father = document.getElementById('new-father').value;
+            const mother = document.getElementById('new-mother').value;
             const dob = document.getElementById('new-dob').value;
             const trade = document.getElementById('new-trade').value;
             const exam = document.getElementById('new-exam').value;
@@ -351,7 +398,7 @@
                 return;
             }
 
-            studentDatabase[r] = { name, father, dob, trade, exam, iti, marks, result, photo };
+            studentDatabase[r] = { name, father, mother, certno, dob, trade, exam, iti, marks, result, photo };
             alert("Data save ho gaya! Isey permanent rakhne ke liye code ki 'studentDatabase' list mein isey add kar dena.");
             
             const baseUrl = window.location.href.split('?')[0];
