@@ -54,7 +54,7 @@
 
         .cert-footer-area { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 40px; font-size: 12px; }
 
-        /* Marksheet Styling (Exact sample layout match) */
+        /* Marksheet Styling */
         .top-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
         .student-photo-box { width: 90px; height: 110px; border: 1px solid #999; background: #eee; display: flex; align-items: center; justify-content: center; overflow: hidden; }
         .student-photo-box img { width: 100%; height: 100%; object-fit: cover; }
@@ -101,7 +101,7 @@
     <div class="home-container no-print" id="home-portal">
         <h2>NCVT ITI Admin & Verification Portal</h2>
         <div class="search-box">
-            <p style="font-size: 13px; color: #555; margin-bottom: 8px;">Pehlan da save kita Roll Number search karo[cite: 16]:</p>
+            <p style="font-size: 13px; color: #555; margin-bottom: 8px;">Pehlan da save kita Roll Number search karo:</p>
             <input type="text" id="search-roll" placeholder="Enter Roll Number (e.g. 00150803159242)">
             <button class="search-btn" onclick="searchStudent()">Search</button>
         </div>
@@ -131,16 +131,16 @@
         
         <!-- Switch Tabs -->
         <div class="doc-tabs no-print">
-            <button class="tab-btn active" onclick="switchTab('certificate')">View Original Certificate[cite: 15]</button>
-            <button class="tab-btn" onclick="switchTab('marksheet')">View Marksheet[cite: 16]</button>
+            <button class="tab-btn active" onclick="switchTab('certificate')">View Original Certificate</button>
+            <button class="tab-btn" onclick="switchTab('marksheet')">View Marksheet</button>
         </div>
 
         <!-- 1. ORIGINAL ITI CERTIFICATE SECTION -->
         <div id="section-certificate" class="doc-section active">
             <div class="cert-border">
                 <div class="cert-top-flex">
-                    <div>रोल नं. Roll No. <span id="c-roll"></span>[cite: 15]</div>
-                    <div>प्रमाण-पत्र सं. Certificate No. <span id="c-certno"></span>[cite: 15]</div>
+                    <div>रोल नं. Roll No. <span id="c-roll"></span></div>
+                    <div>प्रमाण-पत्र सं. Certificate No. <span id="c-certno"></span></div>
                 </div>
 
                 <div class="cert-center-emblem">
@@ -148,51 +148,51 @@
                 </div>
 
                 <div class="cert-header-text">
-                    <h3>भारत सरकार / GOVERNMENT OF INDIA[cite: 15]</h3>
-                    <h3>कौशल विकास एवं उद्यमिता मंत्रालय / MINISTRY OF SKILL DEVELOPMENT AND ENTREPRENEURSHIP[cite: 15]</h3>
-                    <h2>राष्ट्रीय व्यावसायिक प्रशिक्षण परिषद् / NATIONAL COUNCIL FOR VOCATIONAL TRAINING[cite: 15]</h2>
-                    <h1>राष्ट्रीय व्यवसाय प्रमाण-पत्र / NATIONAL TRADE CERTIFICATE[cite: 15]</h1>
+                    <h3>भारत सरकार / GOVERNMENT OF INDIA</h3>
+                    <h3>कौशल विकास एवं उद्यमिता मंत्रालय / MINISTRY OF SKILL DEVELOPMENT AND ENTREPRENEURSHIP</h3>
+                    <h2>राष्ट्रीय व्यावसायिक प्रशिक्षण परिषद् / NATIONAL COUNCIL FOR VOCATIONAL TRAINING</h2>
+                    <h1>राष्ट्रीय व्यवसाय प्रमाण-पत्र / NATIONAL TRADE CERTIFICATE</h1>
                 </div>
 
                 <div class="cert-body-content">
                     <div class="cert-row">
-                        <div class="cert-label">श्री / श्रीमती / कुमारी / Shri / Smt / Kumari[cite: 15]:</div>
+                        <div class="cert-label">श्री / श्रीमती / कुमारी / Shri / Smt / Kumari:</div>
                         <div class="cert-value" id="c-name"></div>
                     </div>
                     <div class="cert-row">
-                        <div class="cert-label">पुत्र / पत्नी / पुत्री श्री / Son / Wife / Daughter of Shri[cite: 15]:</div>
+                        <div class="cert-label">पुत्र / पत्नी / पुत्री श्री / Son / Wife / Daughter of Shri:</div>
                         <div class="cert-value" id="c-father"></div>
                     </div>
                     <div class="cert-row">
-                        <div class="cert-label">माता का नाम / Mother's name Smt.[cite: 15]:</div>
+                        <div class="cert-label">माता का नाम / Mother's name Smt.:</div>
                         <div class="cert-value" id="c-mother"></div>
                     </div>
                     <div class="cert-row">
-                        <div class="cert-label">जन्म तिथि / Date of Birth[cite: 15]:</div>
+                        <div class="cert-label">जन्म तिथि / Date of Birth:</div>
                         <div class="cert-value" id="c-dob"></div>
                     </div>
                     <div class="cert-row">
-                        <div class="cert-label">संस्था का नाम / Name of the Institute[cite: 15]:</div>
+                        <div class="cert-label">संस्था का नाम / Name of the Institute:</div>
                         <div class="cert-value" id="c-iti"></div>
                     </div>
                     <div class="cert-row">
-                        <div class="cert-label">व्यवसाय का नाम / Name of the Trade[cite: 15]:</div>
+                        <div class="cert-label">व्यवसाय का नाम / Name of the Trade:</div>
                         <div class="cert-value" id="c-trade"></div>
                     </div>
                     <div class="cert-row">
-                        <div class="cert-label">अखिल भारतीय व्यवसाय परीक्षा उत्तीर्ण होने पर[cite: 15]:</div>
-                        <div class="cert-value">having passed All India Trade Test held in <span id="c-exam"></span>[cite: 15]</div>
+                        <div class="cert-label">अखिल भारतीय व्यवसाय परीक्षा उत्तीर्ण होने पर:</div>
+                        <div class="cert-value">having passed All India Trade Test held in <span id="c-exam"></span></div>
                     </div>
                 </div>
 
                 <div class="cert-footer-area">
                     <div>
-                        <p><strong>दिनांक / Date:</strong> 30-Dec-2016[cite: 15]</p>
+                        <p><strong>दिनांक / Date:</strong> 30-Dec-2016</p>
                     </div>
                     <div style="text-align: center;">
-                        <div style="font-family: cursive; font-size: 15px; color: #003366;">सदस्य सचिव[cite: 15]</div>
-                        <div>Member Secretary[cite: 15]</div>
-                        <div style="font-size: 11px;">राष्ट्रीय व्यावसायिक प्रशिक्षण परिषद[cite: 15]</div>
+                        <div style="font-family: cursive; font-size: 15px; color: #003366;">सदस्य सचिव</div>
+                        <div>Member Secretary</div>
+                        <div style="font-size: 11px;">राष्ट्रीय व्यावसायिक प्रशिक्षण परिषद</div>
                     </div>
                 </div>
             </div>
@@ -202,7 +202,7 @@
         <div id="section-marksheet" class="doc-section">
             <div class="top-header">
                 <div>
-                    <div class="hindi-reg">अनुक्रमांक: <span id="disp-roll-hindi"></span>[cite: 16]</div>
+                    <div class="hindi-reg">अनुक्रमांक: <span id="disp-roll-hindi"></span></div>
                     <div class="student-photo-box" style="margin-top: 5px;">
                         <img id="disp-photo" src="" alt="Photo">
                     </div>
@@ -215,26 +215,26 @@
                 </div>
             </div>
 
-            <div class="roll-top">Roll No.: <span id="disp-roll"></span>[cite: 16]</div>
+            <div class="roll-top">Roll No.: <span id="disp-roll"></span></div>
 
-            <h2 class="cert-title">STATEMENT OF MARKS FOR AITT CONDUCTED UNDER THE AEGIS OF NCVT[cite: 16]</h2>
-            <div class="sub-title">Academic Session - Aug 2015 &nbsp;|&nbsp; Semester - 2 (CTS Semester System) Engineering Trades[cite: 16]</div>
+            <h2 class="cert-title">STATEMENT OF MARKS FOR AITT CONDUCTED UNDER THE AEGIS OF NCVT</h2>
+            <div class="sub-title">Academic Session - Aug 2015 &nbsp;|&nbsp; Semester - 2 (CTS Semester System) Engineering Trades</div>
             
             <div class="header-info">
                 <div class="info-row">
-                    <span><strong>Name:</strong> <span id="disp-name"></span>[cite: 16]</span>
-                    <span><strong>Date of Birth:</strong> <span id="disp-dob"></span>[cite: 16]</span>
+                    <span><strong>Name:</strong> <span id="disp-name"></span></span>
+                    <span><strong>Date of Birth:</strong> <span id="disp-dob"></span></span>
                 </div>
                 <div class="info-row">
-                    <span><strong>Father/Guardian Name:</strong> <span id="disp-father"></span>[cite: 16]</span>
-                    <span><strong>Exam Month-Year:</strong> <span id="disp-exam"></span>[cite: 16]</span>
+                    <span><strong>Father/Guardian Name:</strong> <span id="disp-father"></span></span>
+                    <span><strong>Exam Month-Year:</strong> <span id="disp-exam"></span></span>
                 </div>
                 <div class="info-row">
-                    <span><strong>Trade Name:</strong> <span id="disp-trade"></span>[cite: 16]</span>
-                    <span><strong>Trainee Type:</strong> REGULAR[cite: 16]</span>
+                    <span><strong>Trade Name:</strong> <span id="disp-trade"></span></span>
+                    <span><strong>Trainee Type:</strong> REGULAR</span>
                 </div>
                 <div style="margin-top: 4px;">
-                    <strong>ITI Name & Address:</strong> <span id="disp-iti"></span>[cite: 16]
+                    <strong>ITI Name & Address:</strong> <span id="disp-iti"></span>
                 </div>
             </div>
 
@@ -278,23 +278,23 @@
             </table>
 
             <div class="result-section">
-                <div><strong>RESULT DATE:</strong> 30-Dec-16[cite: 16]</div>
-                <div><strong>RESULT:</strong> <span style="color:green; font-weight:bold;"><span id="disp-result"></span></span>[cite: 16]</div>
+                <div><strong>RESULT DATE:</strong> 30-Dec-16</div>
+                <div><strong>RESULT:</strong> <span style="color:green; font-weight:bold;"><span id="disp-result"></span></span></div>
             </div>
 
             <div class="sign-area">
                 <div class="sign-box">
-                    <div style="font-family: cursive; font-size: 15px; color: #003366;">Member Secretary[cite: 16]</div>
-                    <div>Member Secretary NCVT[cite: 16]</div>
+                    <div style="font-family: cursive; font-size: 15px; color: #003366;">Member Secretary</div>
+                    <div>Member Secretary NCVT</div>
                 </div>
             </div>
 
             <div class="verified">
-                ✓ STATUS: VERIFIED AUTHENTIC CERTIFICATE (NCVT MIS PORTAL)[cite: 16]
+                ✓ STATUS: VERIFIED AUTHENTIC CERTIFICATE (NCVT MIS PORTAL)
             </div>
 
             <div class="footer-note">
-                <p><strong>दिनांक/Date:</strong> 12-Jun-22 &nbsp;&nbsp; This is a computer generated Mark Sheet and it does not require any physical signature or attestation[cite: 16].</p>
+                <p><strong>दिनांक/Date:</strong> 12-Jun-22 &nbsp;&nbsp; This is a computer generated Mark Sheet and it does not require any physical signature or attestation.</p>
             </div>
         </div>
 
