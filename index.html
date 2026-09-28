@@ -8,14 +8,14 @@
         @page { size: A4 landscape; margin: 10mm; }
         body { font-family: Arial, sans-serif; background: #f4f7f6; margin: 0; padding: 20px; }
         
-        /* Home Search / Admin Panel */
-        .home-container { background: #fff; padding: 30px; border-radius: 8px; max-width: 600px; margin: 50px auto; box-shadow: 0 4px 10px rgba(0,0,0,0.1); text-align: center; }
-        .home-container h2 { color: #003366; }
-        .search-box { margin: 20px 0; }
-        .search-box input { width: 80%; padding: 10px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px; }
-        .search-btn { padding: 10px 20px; background: #003366; color: white; border: none; font-size: 14px; font-weight: bold; border-radius: 4px; cursor: pointer; margin-top: 10px; }
+        /* Admin & Search Portal */
+        .home-container { background: #fff; padding: 30px; border-radius: 8px; max-width: 650px; margin: 30px auto; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .home-container h2 { color: #003366; text-align: center; margin-top: 0; }
+        .search-box { margin: 20px 0; text-align: center; }
+        .search-box input { width: 70%; padding: 10px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px; }
+        .search-btn { padding: 10px 20px; background: #003366; color: white; border: none; font-size: 14px; font-weight: bold; border-radius: 4px; cursor: pointer; }
         
-        .admin-form { margin-top: 30px; border-top: 1px solid #ddd; padding-top: 20px; text-align: left; }
+        .admin-form { margin-top: 20px; border-top: 2px solid #003366; padding-top: 20px; }
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .form-group { margin-bottom: 10px; }
         .form-group label { display: block; font-size: 11px; font-weight: bold; color: #333; margin-bottom: 2px; }
@@ -33,7 +33,7 @@
         .student-photo-box img { width: 100%; height: 100%; object-fit: cover; }
 
         .emblem-box { text-align: center; width: 90px; }
-        .emblem-box img { width: 65px; height: auto; } /* Natural Black/Dark Ashoka Pillar */
+        .emblem-box img { width: 65px; height: auto; }
         
         .qr-container img { width: 105px; height: 105px; border: 1px solid #ccc; padding: 3px; background: white; }
         
@@ -71,29 +71,28 @@
 
     <!-- Starting Admin & Search Portal -->
     <div class="home-container" id="home-portal">
-        <h2>NCVT ITI Verification & Admin Portal</h2>
-        <p style="font-size: 13px; color: #555;">Student da Roll Number darj karke certificate dekho:</p>
+        <h2>NCVT ITI Admin & Verification Portal</h2>
         <div class="search-box">
+            <p style="font-size: 13px; color: #555; margin-bottom: 8px;">Pehlan da save kita Roll Number search karo:</p>
             <input type="text" id="search-roll" placeholder="Enter Roll Number (e.g. 00150803159242)">
-            <br>
-            <button class="search-btn" onclick="searchStudent()">Search Certificate</button>
+            <button class="search-btn" onclick="searchStudent()">Search</button>
         </div>
 
         <div class="admin-form">
-            <h4 style="color: #003366; margin-bottom: 10px;">Nava Student Data Add Karo (Permanent Save)</h4>
+            <h4 style="color: #003366; margin-top: 0; margin-bottom: 10px;">Nava Student Data Add Karo (Permanent Database)</h4>
             <div class="form-grid">
-                <div class="form-group"><label>Roll Number:</label><input type="text" id="new-roll" value="00150803159242"></div>
-                <div class="form-group"><label>Student Name:</label><input type="text" id="new-name" value="SUNIL KUMAR"></div>
-                <div class="form-group"><label>Father's Name:</label><input type="text" id="new-father" value="PREM KUMAR"></div>
-                <div class="form-group"><label>Date of Birth:</label><input type="text" id="new-dob" value="19-Jul-87"></div>
-                <div class="form-group"><label>Trade Name:</label><input type="text" id="new-trade" value="Plumber"></div>
-                <div class="form-group"><label>Exam Month-Year:</label><input type="text" id="new-exam" value="Jul 2016"></div>
-                <div class="form-group" style="grid-column: span 2;"><label>ITI Address:</label><input type="text" id="new-iti" value="PR03000039 - Govt. ITI, Pathankot"></div>
+                <div class="form-group"><label>Roll Number:</label><input type="text" id="new-roll" value=""></div>
+                <div class="form-group"><label>Student Name:</label><input type="text" id="new-name" value=""></div>
+                <div class="form-group"><label>Father's Name:</label><input type="text" id="new-father" value=""></div>
+                <div class="form-group"><label>Date of Birth:</label><input type="text" id="new-dob" value=""></div>
+                <div class="form-group"><label>Trade Name:</label><input type="text" id="new-trade" value=""></div>
+                <div class="form-group"><label>Exam Month-Year:</label><input type="text" id="new-exam" value=""></div>
+                <div class="form-group" style="grid-column: span 2;"><label>ITI Address:</label><input type="text" id="new-iti" value=""></div>
                 <div class="form-group"><label>Total Marks:</label><input type="text" id="new-marks" value="536"></div>
                 <div class="form-group"><label>Result Status:</label><input type="text" id="new-result" value="Pass"></div>
                 <div class="form-group" style="grid-column: span 2;"><label>Photo URL:</label><input type="text" id="new-pic" value="https://i.imgur.com/6VBx3io.png"></div>
             </div>
-            <button class="search-btn" style="width: 100%; background: #28a745;" onclick="addNewStudent()">Save & Generate Link</button>
+            <button class="search-btn" style="width: 100%; background: #28a745; margin-top: 10px;" onclick="addNewStudent()">Save & Generate Certificate</button>
         </div>
     </div>
 
@@ -198,12 +197,12 @@
 
         <div class="action-btns">
             <button class="print-btn" onclick="window.print()">Print / Save Certificate as PDF</button>
-            <button class="edit-btn" onclick="goHome()">Back to Search</button>
+            <button class="edit-btn" onclick="goHome()">Back to Admin Portal</button>
         </div>
     </div>
 
     <script>
-        // Database of students
+        // Permanent Student Database list
         const studentDatabase = {
             "00150803159242": {
                 name: "SUNIL KUMAR", father: "PREM KUMAR", dob: "19-Jul-87", trade: "Plumber",
@@ -237,6 +236,7 @@
                 const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(currentUrl)}`;
                 document.getElementById('qr-code').src = qrApiUrl;
             } else {
+                // By default show Admin Portal / Home page
                 document.getElementById('home-portal').style.display = 'block';
                 document.getElementById('certificate-box').style.display = 'none';
             }
@@ -253,7 +253,7 @@
         }
 
         function addNewStudent() {
-            const r = document.getElementById('new-roll').value;
+            const r = document.getElementById('new-roll').value.trim();
             const name = document.getElementById('new-name').value;
             const father = document.getElementById('new-father').value;
             const dob = document.getElementById('new-dob').value;
@@ -264,8 +264,13 @@
             const result = document.getElementById('new-result').value;
             const photo = document.getElementById('new-pic').value;
 
+            if(!r) {
+                alert("Kripya Roll Number zaroor bharo!");
+                return;
+            }
+
             studentDatabase[r] = { name, father, dob, trade, exam, iti, marks, result, photo };
-            alert("Data save ho gaya! Code vich eh data permanent add karn layi studentDatabase object ma update kari do.");
+            alert("Data save ho gaya! Isey permanent rakhne ke liye code ki 'studentDatabase' list mein isey add kar dena.");
             
             const baseUrl = window.location.href.split('?')[0];
             window.location.href = `${baseUrl}?roll=${encodeURIComponent(r)}`;
