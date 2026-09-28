@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NCVT ITI Verification Portal</title>
+    <title>NCVT ITI Original Certificate & Marksheet Portal</title>
     <style>
         @page { size: A4 landscape; margin: 10mm; }
         body { font-family: Arial, sans-serif; background: #f4f7f6; margin: 0; padding: 20px; }
@@ -21,13 +21,30 @@
         .form-group label { display: block; font-size: 11px; font-weight: bold; color: #333; margin-bottom: 2px; }
         .form-group input { width: 100%; padding: 6px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; font-size: 12px; }
 
-        /* Certificate Styling - A4 Landscape */
+        /* Main Document Container - A4 Landscape */
         .container { 
             width: 1050px; max-width: 100%; min-height: 700px;
             margin: auto; background: white; padding: 30px; box-sizing: border-box;
             border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); display: none; position: relative; 
         }
+
+        /* Tabs for Certificate / Marksheet Toggle */
+        .doc-tabs { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; }
+        .tab-btn { padding: 8px 20px; background: #ddd; border: none; font-weight: bold; cursor: pointer; border-radius: 4px; }
+        .tab-btn.active { background: #003366; color: white; }
         
+        .doc-section { display: none; }
+        .doc-section.active { display: block; }
+
+        /* Original ITI Certificate Design Styling */
+        .cert-border { border: 5px solid #003366; padding: 25px; position: relative; min-height: 550px; background: #fffdf9; }
+        .cert-header { text-align: center; margin-bottom: 20px; }
+        .cert-header h1 { color: #003366; font-size: 24px; margin: 5px 0; }
+        .cert-header h3 { color: #555; font-size: 16px; margin: 0; }
+        .cert-body { font-size: 15px; line-height: 2; text-align: center; margin-top: 40px; }
+        .cert-footer { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 80px; }
+
+        /* Marksheet Styling */
         .top-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
         .student-photo-box { width: 90px; height: 110px; border: 1px solid #999; background: #eee; display: flex; align-items: center; justify-content: center; overflow: hidden; }
         .student-photo-box img { width: 100%; height: 100%; object-fit: cover; }
@@ -61,16 +78,17 @@
         .edit-btn { flex: 1; padding: 12px; background: #003366; color: white; border: none; font-size: 16px; border-radius: 4px; cursor: pointer; font-weight: bold; }
 
         @media print {
-            .no-print, .action-btns { display: none !important; }
+            .no-print, .action-btns, .doc-tabs { display: none !important; }
             body { background: white; padding: 0; margin: 0; }
             .container { box-shadow: none; padding: 10px; display: block !important; border: none; width: 100%; }
+            .doc-section { display: block !important; page-break-after: always; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Starting Admin & Search Portal -->
-    <div class="home-container" id="home-portal">
+    <!-- Admin & Search Portal -->
+    <div class="home-container no-print" id="home-portal">
         <h2>NCVT ITI Admin & Verification Portal</h2>
         <div class="search-box">
             <p style="font-size: 13px; color: #555; margin-bottom: 8px;">Pehlan da save kita Roll Number search karo:</p>
@@ -92,111 +110,152 @@
                 <div class="form-group"><label>Result Status:</label><input type="text" id="new-result" value="Pass"></div>
                 <div class="form-group" style="grid-column: span 2;"><label>Photo URL:</label><input type="text" id="new-pic" value="https://i.imgur.com/6VBx3io.png"></div>
             </div>
-            <button class="search-btn" style="width: 100%; background: #28a745; margin-top: 10px;" onclick="addNewStudent()">Save & Generate Certificate</button>
+            <button class="search-btn" style="width: 100%; background: #28a745; margin-top: 10px;" onclick="addNewStudent()">Save & Generate Document</button>
         </div>
     </div>
 
-    <!-- Certificate View Container -->
+    <!-- Document Container (Certificate & Marksheet) -->
     <div class="container" id="certificate-box">
-        <div class="top-header">
-            <div>
-                <div class="hindi-reg">अनुक्रमांक: <span id="disp-roll-hindi"></span></div>
-                <div class="student-photo-box" style="margin-top: 5px;">
-                    <img id="disp-photo" src="" alt="Photo">
+        
+        <!-- Switch Tabs -->
+        <div class="doc-tabs no-print">
+            <button class="tab-btn active" onclick="switchTab('marksheet')">View Marksheet</button>
+            <button class="tab-btn" onclick="switchTab('certificate')">View Original Certificate</button>
+        </div>
+
+        <!-- 1. MARKSHEET SECTION -->
+        <div id="section-marksheet" class="doc-section active">
+            <div class="top-header">
+                <div>
+                    <div class="hindi-reg">अनुक्रमांक: <span id="disp-roll-hindi"></span></div>
+                    <div class="student-photo-box" style="margin-top: 5px;">
+                        <img id="disp-photo" src="" alt="Photo">
+                    </div>
+                </div>
+                <div class="emblem-box">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="National Emblem">
+                </div>
+                <div class="qr-container">
+                    <img id="qr-code" src="" alt="Verification QR Code">
                 </div>
             </div>
-            <div class="emblem-box">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="National Emblem">
+
+            <div class="roll-top">Roll No.: <span id="disp-roll"></span></div>
+
+            <h2 class="cert-title">STATEMENT OF MARKS FOR AITT CONDUCTED UNDER THE AEGIS OF NCVT</h2>
+            <div class="sub-title">Academic Session - Aug 2015 &nbsp;|&nbsp; Semester - 2 (CTS Semester System) Engineering Trades</div>
+            
+            <div class="header-info">
+                <div class="info-row">
+                    <span><strong>Name:</strong> <span id="disp-name"></span></span>
+                    <span><strong>Date of Birth:</strong> <span id="disp-dob"></span></span>
+                </div>
+                <div class="info-row">
+                    <span><strong>Father/Guardian Name:</strong> <span id="disp-father"></span></span>
+                    <span><strong>Exam Month-Year:</strong> <span id="disp-exam"></span></span>
+                </div>
+                <div class="info-row">
+                    <span><strong>Trade Name:</strong> <span id="disp-trade"></span></span>
+                    <span><strong>Trainee Type:</strong> REGULAR</span>
+                </div>
+                <div style="margin-top: 4px;">
+                    <strong>ITI Name & Address:</strong> <span id="disp-iti"></span>
+                </div>
             </div>
-            <div class="qr-container">
-                <img id="qr-code" src="" alt="Verification QR Code">
+
+            <table>
+                <tr>
+                    <th>S. No.</th>
+                    <th>Paper</th>
+                    <th>Paper Max. Marks</th>
+                    <th>Paper Min. Marks</th>
+                    <th>Total Marks Secured</th>
+                    <th>Subject</th>
+                    <th>Subject Max. Marks</th>
+                    <th>Subject Min. Marks</th>
+                    <th>Marks Secured</th>
+                </tr>
+                <tr>
+                    <td rowspan="2">1</td><td rowspan="2">Paper-I</td><td rowspan="2">170</td><td rowspan="2">68 (40%)</td><td rowspan="2">80</td>
+                    <td>Trade Theory</td><td>150</td><td>37.5 (25)%</td><td>62</td>
+                </tr>
+                <tr><td>Sessional</td><td>20</td><td>-</td><td>18</td></tr>
+                <tr>
+                    <td rowspan="3">2</td><td rowspan="3">Paper-II</td><td rowspan="3">135</td><td rowspan="3">54 (40%)</td><td rowspan="3">97</td>
+                    <td>Part-A Workshop Cal. & Sci.</td><td>75</td><td>18.75 (25)%</td><td>60</td>
+                </tr>
+                <tr><td>Sessional</td><td>10</td><td>-</td><td>9</td></tr>
+                <tr><td>Part-B Employability Skills</td><td>50</td><td>12.5 (25)%</td><td>28</td></tr>
+                <tr>
+                    <td rowspan="2">3</td><td rowspan="2">Paper-III</td><td rowspan="2">95</td><td rowspan="2">38 (40%)</td><td rowspan="2">68</td>
+                    <td>Engg. Drawing</td><td>75</td><td>18.75 (25)%</td><td>49</td>
+                </tr>
+                <tr><td>Sessional</td><td>20</td><td>-</td><td>19</td></tr>
+                <tr>
+                    <td rowspan="2">4</td><td rowspan="2">Practical</td><td rowspan="2">300</td><td rowspan="2">180 (60%)</td><td rowspan="2">291</td>
+                    <td>Trade Practical</td><td>270</td><td>-</td><td>262</td>
+                </tr>
+                <tr><td>Sessional</td><td>30</td><td>-</td><td>29</td></tr>
+                <tr>
+                    <td colspan="2"><strong>Total</strong></td><td><strong>700</strong></td><td>-</td><td><strong><span id="disp-total"></span></strong></td>
+                    <td colspan="3"><strong>Total</strong></td><td><strong><span id="disp-total2"></span></strong></td>
+                </tr>
+            </table>
+
+            <div class="result-section">
+                <div><strong>RESULT DATE:</strong> 30-Dec-16</div>
+                <div><strong>RESULT:</strong> <span style="color:green; font-weight:bold;"><span id="disp-result"></span></span></div>
+            </div>
+
+            <div class="sign-area">
+                <div class="sign-box">
+                    <div style="font-family: cursive; font-size: 15px; color: #003366;">Member Secretary</div>
+                    <div>Member Secretary NCVT</div>
+                </div>
+            </div>
+
+            <div class="verified">
+                ✓ STATUS: VERIFIED AUTHENTIC CERTIFICATE (NCVT MIS PORTAL)
+            </div>
+
+            <div class="footer-note">
+                <p><strong>दिनांक/Date:</strong> 12-Jun-22 &nbsp;&nbsp; This is a computer generated Mark Sheet and it does not require any physical signature or attestation.</p>
             </div>
         </div>
 
-        <div class="roll-top">Roll No.: <span id="disp-roll"></span></div>
-
-        <h2 class="cert-title">STATEMENT OF MARKS FOR AITT CONDUCTED UNDER THE AEGIS OF NCVT</h2>
-        <div class="sub-title">Academic Session - Aug 2015 &nbsp;|&nbsp; Semester - 2 (CTS Semester System) Engineering Trades</div>
-        
-        <div class="header-info">
-            <div class="info-row">
-                <span><strong>Name:</strong> <span id="disp-name"></span></span>
-                <span><strong>Date of Birth:</strong> <span id="disp-dob"></span></span>
+        <!-- 2. ORIGINAL ITI CERTIFICATE SECTION -->
+        <div id="section-certificate" class="doc-section">
+            <div class="cert-border">
+                <div style="text-align: center;">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="Emblem" style="width: 60px;">
+                </div>
+                <div class="cert-header">
+                    <h3>NATIONAL COUNCIL FOR VOCATIONAL TRAINING</h3>
+                    <h1>NATIONAL TRADE CERTIFICATE</h1>
+                    <p><i>(Under the Aegis of Ministry of Skill Development and Entrepreneurship, Government of India)</i></p>
+                </div>
+                <div class="cert-body">
+                    <p>This is to certify that <strong><span id="cert-name" style="font-size: 20px; color: #003366;"></span></strong></p>
+                    <p>Son / Daughter of Shri <strong><span id="cert-father"></span></strong></p>
+                    <p>Roll Number: <strong><span id="cert-roll"></span></strong> &nbsp;&nbsp;|&nbsp;&nbsp; Date of Birth: <strong><span id="cert-dob"></span></strong></p>
+                    <p>having successfully completed the training in the trade of <strong><span id="cert-trade" style="color: #003366;"></span></strong></p>
+                    <p>held in <strong><span id="cert-exam"></span></strong> under the Industrial Training Institute <strong><span id="cert-iti"></span></strong></p>
+                    <p>has been admitted to the <strong>NATIONAL TRADE CERTIFICATE</strong> passed with Result: <strong><span id="cert-result" style="color: green;"></span></strong>.</p>
+                </div>
+                <div class="cert-footer">
+                    <div>
+                        <p>Date: 12-Jun-22</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-family: cursive; font-size: 15px; color: #003366;">Director General</div>
+                        <div>Directorate General of Training</div>
+                    </div>
+                </div>
             </div>
-            <div class="info-row">
-                <span><strong>Father/Guardian Name:</strong> <span id="disp-father"></span></span>
-                <span><strong>Exam Month-Year:</strong> <span id="disp-exam"></span></span>
-            </div>
-            <div class="info-row">
-                <span><strong>Trade Name:</strong> <span id="disp-trade"></span></span>
-                <span><strong>Trainee Type:</strong> REGULAR</span>
-            </div>
-            <div style="margin-top: 4px;">
-                <strong>ITI Name & Address:</strong> <span id="disp-iti"></span>
-            </div>
-        </div>
-
-        <table>
-            <tr>
-                <th>S. No.</th>
-                <th>Paper</th>
-                <th>Paper Max. Marks</th>
-                <th>Paper Min. Marks</th>
-                <th>Total Marks Secured</th>
-                <th>Subject</th>
-                <th>Subject Max. Marks</th>
-                <th>Subject Min. Marks</th>
-                <th>Marks Secured</th>
-            </tr>
-            <tr>
-                <td rowspan="2">1</td><td rowspan="2">Paper-I</td><td rowspan="2">170</td><td rowspan="2">68 (40%)</td><td rowspan="2">80</td>
-                <td>Trade Theory</td><td>150</td><td>37.5 (25)%</td><td>62</td>
-            </tr>
-            <tr><td>Sessional</td><td>20</td><td>-</td><td>18</td></tr>
-            <tr>
-                <td rowspan="3">2</td><td rowspan="3">Paper-II</td><td rowspan="3">135</td><td rowspan="3">54 (40%)</td><td rowspan="3">97</td>
-                <td>Part-A Workshop Cal. & Sci.</td><td>75</td><td>18.75 (25)%</td><td>60</td>
-            </tr>
-            <tr><td>Sessional</td><td>10</td><td>-</td><td>9</td></tr>
-            <tr><td>Part-B Employability Skills</td><td>50</td><td>12.5 (25)%</td><td>28</td></tr>
-            <tr>
-                <td rowspan="2">3</td><td rowspan="2">Paper-III</td><td rowspan="2">95</td><td rowspan="2">38 (40%)</td><td rowspan="2">68</td>
-                <td>Engg. Drawing</td><td>75</td><td>18.75 (25)%</td><td>49</td>
-            </tr>
-            <tr><td>Sessional</td><td>20</td><td>-</td><td>19</td></tr>
-            <tr>
-                <td rowspan="2">4</td><td rowspan="2">Practical</td><td rowspan="2">300</td><td rowspan="2">180 (60%)</td><td rowspan="2">291</td>
-                <td>Trade Practical</td><td>270</td><td>-</td><td>262</td>
-            </tr>
-            <tr><td>Sessional</td><td>30</td><td>-</td><td>29</td></tr>
-            <tr>
-                <td colspan="2"><strong>Total</strong></td><td><strong>700</strong></td><td>-</td><td><strong><span id="disp-total"></span></strong></td>
-                <td colspan="3"><strong>Total</strong></td><td><strong><span id="disp-total2"></span></strong></td>
-            </tr>
-        </table>
-
-        <div class="result-section">
-            <div><strong>RESULT DATE:</strong> 30-Dec-16</div>
-            <div><strong>RESULT:</strong> <span style="color:green; font-weight:bold;"><span id="disp-result"></span></span></div>
-        </div>
-
-        <div class="sign-area">
-            <div class="sign-box">
-                <div style="font-family: cursive; font-size: 15px; color: #003366;">Member Secretary</div>
-                <div>Member Secretary NCVT</div>
-            </div>
-        </div>
-
-        <div class="verified">
-            ✓ STATUS: VERIFIED AUTHENTIC CERTIFICATE (NCVT MIS PORTAL)
-        </div>
-
-        <div class="footer-note">
-            <p><strong>दिनांक/Date:</strong> 12-Jun-22 &nbsp;&nbsp; This is a computer generated Mark Sheet and it does not require any physical signature or attestation. All contents of this Mark Sheet can be verified for authenticity by the process of online verification through scanning the QR code printed above.</p>
         </div>
 
         <div class="action-btns">
-            <button class="print-btn" onclick="window.print()">Print / Save Certificate as PDF</button>
+            <button class="print-btn" onclick="window.print()">Print / Save as PDF</button>
             <button class="edit-btn" onclick="goHome()">Back to Admin Portal</button>
         </div>
     </div>
@@ -216,6 +275,7 @@
 
             if (roll && studentDatabase[roll]) {
                 const s = studentDatabase[roll];
+                // Marksheet Data Binding
                 document.getElementById('disp-name').innerText = s.name;
                 document.getElementById('disp-roll').innerText = roll;
                 document.getElementById('disp-roll-hindi').innerText = roll;
@@ -229,6 +289,16 @@
                 document.getElementById('disp-result').innerText = s.result;
                 document.getElementById('disp-photo').src = s.photo;
 
+                // Certificate Data Binding
+                document.getElementById('cert-name').innerText = s.name;
+                document.getElementById('cert-father').innerText = s.father;
+                document.getElementById('cert-roll').innerText = roll;
+                document.getElementById('cert-dob').innerText = s.dob;
+                document.getElementById('cert-trade').innerText = s.trade;
+                document.getElementById('cert-exam').innerText = s.exam;
+                document.getElementById('cert-iti').innerText = s.iti;
+                document.getElementById('cert-result').innerText = s.result;
+
                 document.getElementById('home-portal').style.display = 'none';
                 document.getElementById('certificate-box').style.display = 'block';
 
@@ -236,11 +306,23 @@
                 const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(currentUrl)}`;
                 document.getElementById('qr-code').src = qrApiUrl;
             } else {
-                // By default show Admin Portal / Home page
                 document.getElementById('home-portal').style.display = 'block';
                 document.getElementById('certificate-box').style.display = 'none';
             }
         };
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.doc-section').forEach(sec => sec.classList.remove('active'));
+
+            if(tabName === 'marksheet') {
+                document.getElementById('section-marksheet').classList.add('active');
+                event.target.classList.add('active');
+            } else {
+                document.getElementById('section-certificate').classList.add('active');
+                event.target.classList.add('active');
+            }
+        }
 
         function searchStudent() {
             const roll = document.getElementById('search-roll').value.trim();
