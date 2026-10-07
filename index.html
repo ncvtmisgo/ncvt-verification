@@ -28,6 +28,14 @@
             border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); display: none; position: relative; 
         }
 
+        /* Tabs for Switching */
+        .doc-tabs { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; }
+        .tab-btn { padding: 8px 20px; background: #ddd; border: none; font-weight: bold; cursor: pointer; border-radius: 4px; }
+        .tab-btn.active { background: #003366; color: white; }
+        
+        .doc-section { display: none; }
+        .doc-section.active { display: block; }
+
         /* NTC Certificate Design Styling */
         .ntc-border { border: 3px solid #b8860b; padding: 25px; position: relative; background: #fff; min-height: 620px; box-sizing: border-box; }
         
@@ -54,14 +62,37 @@
         .ntc-footer { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 20px; font-size: 11px; }
         .ntc-note { font-size: 9.5px; color: #444; margin-top: 12px; border-top: 1px solid #ccc; padding-top: 5px; text-align: justify; }
 
+        /* Marksheet Styles */
+        .top-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+        .student-photo-box { width: 90px; height: 110px; border: 1px solid #999; background: #eee; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .student-photo-box img { width: 100%; height: 100%; object-fit: cover; }
+        .emblem-box { text-align: center; width: 90px; }
+        .emblem-box img { width: 65px; height: auto; }
+        .qr-container img { width: 105px; height: 105px; border: 1px solid #ccc; padding: 3px; background: white; }
+        .hindi-reg { font-size: 12px; color: #444; margin-bottom: 2px; text-align: left; }
+        .roll-top { font-size: 13px; font-weight: bold; color: #000; text-align: right; }
+        h2.cert-title { text-align: center; color: #003366; font-size: 18px; margin: 10px 0 5px 0; }
+        .sub-title { text-align: center; font-size: 13px; font-weight: bold; margin-bottom: 15px; color: #222; }
+        .header-info { margin-bottom: 15px; border-bottom: 2px solid #003366; padding-bottom: 10px; font-size: 13px; line-height: 1.6; }
+        .info-row { display: flex; justify-content: space-between; margin-bottom: 4px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid #bbb; padding: 7px; text-align: center; font-size: 12px; }
+        th { background-color: #003366; color: white; font-weight: bold; }
+        .result-section { margin-top: 15px; font-size: 14px; display: flex; justify-content: space-between; align-items: center; }
+        .verified { background-color: #e2f0d9; color: #385723; padding: 9px; text-align: center; font-weight: bold; margin-top: 15px; border-radius: 4px; font-size: 13px; }
+        .footer-note { margin-top: 15px; font-size: 10.5px; color: #555; text-align: justify; line-height: 1.4; }
+        .sign-area { display: flex; justify-content: flex-end; margin-top: 20px; }
+        .sign-box { text-align: center; font-size: 12px; font-weight: bold; }
+
         .action-btns { display: flex; gap: 10px; margin-top: 20px; }
         .print-btn { flex: 1; padding: 12px; background: #28a745; color: white; border: none; font-size: 16px; border-radius: 4px; cursor: pointer; font-weight: bold; }
         .edit-btn { flex: 1; padding: 12px; background: #003366; color: white; border: none; font-size: 16px; border-radius: 4px; cursor: pointer; font-weight: bold; }
 
         @media print {
-            .no-print, .action-btns { display: none !important; }
+            .no-print, .action-btns, .doc-tabs { display: none !important; }
             body { background: white; padding: 0; margin: 0; }
             .container { box-shadow: none; padding: 10px; display: block !important; border: none; width: 100%; }
+            .doc-section { display: block !important; page-break-after: always; }
         }
     </style>
 </head>
@@ -99,11 +130,15 @@
     <!-- Document Container -->
     <div class="container" id="certificate-box">
         
+        <!-- Switch Tabs -->
+        <div class="doc-tabs no-print">
+            <button class="tab-btn active" onclick="switchTab('certificate')">View Original Certificate</button>
+            <button class="tab-btn" onclick="switchTab('marksheet')">View Marksheet</button>
+        </div>
+
         <!-- NTC Certificate Section -->
-        <div id="section-ntc" class="doc-section active">
+        <div id="section-certificate" class="doc-section active">
             <div class="ntc-border">
-                
-                <!-- Top Section: Photo Left, Roll/Cert Right -->
                 <div class="ntc-top">
                     <div class="ntc-photo-box">
                         <img id="c-photo" src="" alt="Student Photo">
@@ -114,7 +149,6 @@
                     </div>
                 </div>
 
-                <!-- Center Emblem & Headings -->
                 <div class="ntc-center-box">
                     <div class="ntc-emblem">
                         <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="Emblem">
@@ -182,90 +216,16 @@
             </div>
         </div>
 
-        <div class="action-btns">
-            <button class="print-btn" onclick="window.print()">Print / Save as PDF</button>
-            <button class="edit-btn" onclick="goHome()">Back to Admin Portal</button>
-        </div>
-    </div>
-
-    <script>
-        // Permanent Student Database list
-        const studentDatabase = {
-            "00150803159242": {
-                name: "SUNIL KUMAR", father: "PREM KUMAR", mother: "JITTO", certno: "1603212401", dob: "19-Jul-1987", trade: "Plumber",
-                session: "Aug 2015", duration: "2 semester", exam: "Jul", year: "2016", iti: "PR03000188-Satluj Institute of Vocational Edu. Village Sandhehasham Backside, PN Bank Firozepur Zira Road", photo: "https://i.imgur.com/6VBx3io.png"
-            }
-        };
-
-        window.onload = function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const roll = urlParams.get('roll');
-
-            if (roll && studentDatabase[roll]) {
-                const s = studentDatabase[roll];
-                // Certificate Data Binding
-                document.getElementById('c-roll').innerText = roll;
-                document.getElementById('c-certno').innerText = s.certno;
-                document.getElementById('c-name').innerText = s.name;
-                document.getElementById('c-father').innerText = s.father;
-                document.getElementById('c-mother').innerText = s.mother;
-                document.getElementById('c-dob').innerText = s.dob;
-                document.getElementById('c-iti').innerText = s.iti;
-                document.getElementById('c-trade').innerText = s.trade;
-                document.getElementById('c-dur').innerText = s.duration;
-                document.getElementById('c-session').innerText = s.session;
-                document.getElementById('c-exam').innerText = s.exam;
-                document.getElementById('c-year').innerText = s.year;
-                document.getElementById('c-photo').src = s.photo;
-
-                document.getElementById('home-portal').style.display = 'none';
-                document.getElementById('certificate-box').style.display = 'block';
-            } else {
-                document.getElementById('home-portal').style.display = 'block';
-                document.getElementById('certificate-box').style.display = 'none';
-            }
-        };
-
-        function searchStudent() {
-            const roll = document.getElementById('search-roll').value.trim();
-            if(studentDatabase[roll]) {
-                const baseUrl = window.location.href.split('?')[0];
-                window.location.href = `${baseUrl}?roll=${encodeURIComponent(roll)}`;
-            } else {
-                alert("Eh Roll Number database vich nahi milia!");
-            }
-        }
-
-        function addNewStudent() {
-            const r = document.getElementById('new-roll').value.trim();
-            const certno = document.getElementById('new-certno').value.trim();
-            const name = document.getElementById('new-name').value;
-            const father = document.getElementById('new-father').value;
-            const mother = document.getElementById('new-mother').value;
-            const dob = document.getElementById('new-dob').value;
-            const trade = document.getElementById('new-trade').value;
-            const session = document.getElementById('new-session').value;
-            const exam = document.getElementById('new-exam').value;
-            const duration = document.getElementById('new-dur').value;
-            const iti = document.getElementById('new-iti').value;
-            const photo = document.getElementById('new-pic').value;
-
-            if(!r) {
-                alert("Kripya Roll Number zaroor bharo!");
-                return;
-            }
-
-            studentDatabase[r] = { name, father, mother, certno, dob, trade, session, exam, duration, year: "2016", iti, photo };
-            alert("Data save ho gaya! Isey permanent rakhne ke liye code ki 'studentDatabase' list mein isey add kar dena.");
-            
-            const baseUrl = window.location.href.split('?')[0];
-            window.location.href = `${baseUrl}?roll=${encodeURIComponent(r)}`;
-        }
-
-        function goHome() {
-            const baseUrl = window.location.href.split('?')[0];
-            window.location.href = baseUrl;
-        }
-    </script>
-</body>
-</html>
+        <!-- Marksheet Section -->
+        <div id="section-marksheet" class="doc-section">
+            <div class="top-header">
+                <div>
+                    <div class="hindi-reg">अनुक्रमांक: <span id="disp-roll-hindi"></span></div>
+                    <div class="student-photo-box" style="margin-top: 5px;">
+                        <img id="disp-photo" src="" alt="Photo">
+                    </div>
+                </div>
+                <div class="emblem-box">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="National Emblem">
+                </div>
+                <div class="qr
